@@ -1,0 +1,25 @@
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:8.4
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_DATABASE=mysql_db
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=secretpassword
+      - MYSQL_USER=mysql_user
+    volumes:
+      - data:/var/lib/mysql
+    labels:
+      org.springframework.boot.service-connection: mysql
+
+  mailpit:
+    container_name: mailpit
+    image: axllent/mailpit
+    ports:
+      - 1025:1025
+      - 8025:8025
+
+volumes:
+  data: {}

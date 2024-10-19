@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "jwt.refresh.expiration",
+      "type": "java.lang.String",
+      "description": "The expiration time of the JWT refresh token in 'ms'"
+    },
+    {
+      "name": "jwt.access.expiration",
+      "type": "java.lang.String",
+      "description": "The expiration time of the JWT access token in 'ms'"
+    },
+    {
+      "name": "frontend.url",
+      "type": "java.lang.String",
+      "description": "The url of the app that implements the urls"
+    }
+  ]
+}
