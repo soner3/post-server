@@ -35,8 +35,8 @@ public class JwtUtils {
     private final String TOKEN_TYPE_ACCESS = "access";
     private final String TOKEN_TYPE_REFRESH = "refresh";
 
-    private final String ACCESS_COOKIE_KEY = "accessToken";
-    private final String REFRESH_COOKIE_KEY = "refreshToken";
+    public static final String ACCESS_COOKIE_KEY = "accessToken";
+    public static final String REFRESH_COOKIE_KEY = "refreshToken";
 
     // Nur für entwicklungs zwecke
     private final KeyPair keyPair = Jwts.SIG.RS512.keyPair().build();
@@ -50,7 +50,7 @@ public class JwtUtils {
         }
     }
 
-    private String createJwtToken(String username, String tokenType, int expiration) {
+    private String generateJwtToken(String username, String tokenType, int expiration) {
         return Jwts
                 .builder()
                 .subject(username)
@@ -64,8 +64,8 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String createRefreshToken(UserDetails userDetails) {
-        return createJwtToken(userDetails.getUsername(), TOKEN_TYPE_REFRESH, refreshExpiryTime);
+    public String generateRefreshToken(UserDetails userDetails) {
+        return generateJwtToken(userDetails.getUsername(), TOKEN_TYPE_REFRESH, refreshExpiryTime);
     }
 
     public String getUsernameFromToken(String token) {
@@ -148,7 +148,7 @@ public class JwtUtils {
 
     public String generateAccessTokenFromRefreshToken(String username, String refreshToken) {
         if (refreshToken != null && validateRefreshToken(refreshToken)) {
-            return createJwtToken(username, TOKEN_TYPE_ACCESS, accessExpiryTime);
+            return generateJwtToken(username, TOKEN_TYPE_ACCESS, accessExpiryTime);
         } else {
             return null;
         }
