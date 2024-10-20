@@ -1,9 +1,12 @@
 package net.sonerapp.db_course_project.interfaces.controller;
 
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,11 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import net.sonerapp.db_course_project.application.dto.UserControllerDto.ActivateUserDto;
 import net.sonerapp.db_course_project.application.dto.UserControllerDto.CreateUserDto;
+import net.sonerapp.db_course_project.application.dto.UserControllerDto.UserDto;
 import net.sonerapp.db_course_project.application.exceptions.NoStrongPasswordException;
 import net.sonerapp.db_course_project.application.exceptions.TokenAlreadyUsedException;
 import net.sonerapp.db_course_project.application.service.user.UserControllerService;
 import net.sonerapp.db_course_project.core.exceptions.UserController.EmailExistsException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.UsernameExistsException;
+import net.sonerapp.db_course_project.core.model.User;
 import net.sonerapp.db_course_project.core.service.UserService;
 
 @RestController
@@ -27,9 +32,13 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserControllerService userControllerService, UserService userService) {
+    private final ConversionService conversionService;
+
+    public UserController(UserControllerService userControllerService, UserService userService,
+            ConversionService conversionService) {
         this.userControllerService = userControllerService;
         this.userService = userService;
+        this.conversionService = conversionService;
     }
 
     @PostMapping("/create")
@@ -41,6 +50,13 @@ public class UserController {
     public ResponseEntity<?> activateUser(@RequestBody @Valid ActivateUserDto tokenData) {
         userService.activateUser(tokenData.token());
         return ResponseEntity.ok("User activated successfully");
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUser(@PathVariable("id") Long id) {
+        User user = userService.getUser(id);
+        UserDto userDto = conversionService.convert(user, UserDto.class);
+        return ResponseEntity.ok(userDto);
     }
 
     // Exceptions

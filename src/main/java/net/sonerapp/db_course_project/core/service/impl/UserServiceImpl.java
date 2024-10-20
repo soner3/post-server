@@ -11,6 +11,7 @@ import net.sonerapp.db_course_project.application.exceptions.TokenAlreadyUsedExc
 import net.sonerapp.db_course_project.application.exceptions.TokenExpiredException;
 import net.sonerapp.db_course_project.application.exceptions.UnknownTokenException;
 import net.sonerapp.db_course_project.core.event.user.UserCreatedEvent;
+import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.EmailExistsException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.UsernameExistsException;
 import net.sonerapp.db_course_project.core.model.Role;
@@ -125,6 +126,12 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         userTokenRepository.save(userToken);
 
+    }
+
+    @Override
+    public User getUser(long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new OutOfBoundsException("No user found with the id: " + id));
     }
 
 }

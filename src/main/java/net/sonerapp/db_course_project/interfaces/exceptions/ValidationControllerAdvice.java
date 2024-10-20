@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import net.sonerapp.db_course_project.application.exceptions.TokenExpiredException;
 import net.sonerapp.db_course_project.application.exceptions.UnknownTokenException;
+import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
 
 @ControllerAdvice("net.sonerapp.db_course_project.interfaces")
 public class ValidationControllerAdvice {
@@ -48,6 +49,14 @@ public class ValidationControllerAdvice {
     public ResponseEntity<?> unknownToken(UnknownTokenException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Unknown Token");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> entityNotFound(OutOfBoundsException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        problem.setTitle("Entity Not Found");
         problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
     }

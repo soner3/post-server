@@ -10,4 +10,6 @@ public interface UserService {
 
     void activateUser(String token);
 
+    User getUser(long id);
+
 }
