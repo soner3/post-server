@@ -11,12 +11,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import net.sonerapp.db_course_project.core.exceptions.DeleteEntityException;
 import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.TokenExpiredException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.UnknownTokenException;
 
 @ControllerAdvice("net.sonerapp.db_course_project.interfaces")
-public class ValidationControllerAdvice {
+public class ApiControllerAdvice {
 
     @ExceptionHandler
     public ResponseEntity<?> validateDto(MethodArgumentNotValidException e) {
@@ -37,7 +38,7 @@ public class ValidationControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> validateTokenExpiry(TokenExpiredException e) {
+    public ResponseEntity<?> tokenExpiryError(TokenExpiredException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Token Expired");
         problem.setDetail(e.getMessage());
@@ -57,6 +58,14 @@ public class ValidationControllerAdvice {
     public ResponseEntity<?> entityNotFound(OutOfBoundsException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         problem.setTitle("Entity Not Found");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> deleteEntityError(DeleteEntityException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("Delete Entity Error");
         problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
     }

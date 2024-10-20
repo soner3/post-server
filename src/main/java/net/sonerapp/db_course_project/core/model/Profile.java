@@ -29,7 +29,7 @@ public class Profile {
     private UUID uuid;
 
     @OneToOne
-    @JoinColumn(name = "user_fk")
+    @JoinColumn(name = "user_fk", nullable = false)
     private User user;
 
     @CreationTimestamp

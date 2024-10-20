@@ -14,6 +14,11 @@
       "name": "frontend.url",
       "type": "java.lang.String",
       "description": "The url of the app that implements the urls"
+    },
+    {
+      "name": "spring.mail.from",
+      "type": "java.lang.String",
+      "description": "The from email address for mails that get sended"
     }
   ]
 }

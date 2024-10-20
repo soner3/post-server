@@ -18,4 +18,6 @@ public interface UserService {
 
     Stream<User> getUserPage(Pageable pageable);
 
+    void deleteUser(long id);
+
 }

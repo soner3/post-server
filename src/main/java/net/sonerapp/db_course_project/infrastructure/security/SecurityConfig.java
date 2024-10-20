@@ -37,10 +37,10 @@ public class SecurityConfig {
     CommandLineRunner initData(UserRepository userRepository, UserService userService) {
         return args -> {
             if (!userRepository.existsByUsername("admin")) {
-                userService.createAdminUser("admin", "admin@admin.com", "adminpassword", "Admin", "Test");
+                userService.createAdminUser("admin", "admin@admin.com", "adminPassword1!", "Admin", "Test");
             }
             if (!userRepository.existsByUsername("user")) {
-                userService.createUser("user", "user@user.com", "userpassword", "User", "Test");
+                userService.createUser("user", "user@user.com", "userPassword1!", "User", "Test");
             }
         };
     }

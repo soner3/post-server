@@ -8,9 +8,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 import net.sonerapp.db_course_project.core.event.user.UserCreatedEvent;
+import net.sonerapp.db_course_project.core.exceptions.DeleteEntityException;
 import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.EmailExistsException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.NoStrongPasswordException;
@@ -156,6 +158,16 @@ public class UserServiceImpl implements UserService {
     private boolean isPasswordStrong(String password) {
         String passwordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$";
         return Pattern.matches(passwordPattern, password);
+    }
+
+    @Override
+    @Transactional
+    public void deleteUser(long id) {
+        int deleteSuccess = userRepository.deleteUserById(id);
+        if (deleteSuccess == 0) {
+            throw new DeleteEntityException("Entity could not be deleted or does not exist");
+        }
+
     }
 
 }

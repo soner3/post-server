@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,14 +41,14 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createUser(@RequestBody @Valid CreateUserDto userData) {
+    public ResponseEntity<String> createUser(@RequestBody @Valid CreateUserDto userData) {
         userService.createUser(userData.username(), userData.email(), userData.password(), userData.firstname(),
                 userData.lastname());
         return ResponseEntity.ok("User created successfully");
     }
 
     @PostMapping("/activate")
-    public ResponseEntity<?> activateUser(@RequestBody @Valid ActivateUserDto tokenData) {
+    public ResponseEntity<String> activateUser(@RequestBody @Valid ActivateUserDto tokenData) {
         userService.activateUser(tokenData.token());
         return ResponseEntity.ok("User activated successfully");
     }
@@ -64,6 +65,12 @@ public class UserController {
         User user = userService.getUser(id);
         UserDto userDto = conversionService.convert(user, UserDto.class);
         return ResponseEntity.ok(userDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteId(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok("User deleted successfully");
     }
 
     // Exceptions
