@@ -1,8 +1,10 @@
 package net.sonerapp.db_course_project.core.service.impl;
 
 import java.time.Instant;
+import java.util.stream.Stream;
 
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -132,6 +134,11 @@ public class UserServiceImpl implements UserService {
     public User getUser(long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new OutOfBoundsException("No user found with the id: " + id));
+    }
+
+    @Override
+    public Stream<User> getUserPage(Pageable pageable) {
+        return userRepository.findAll(pageable).get();
     }
 
 }

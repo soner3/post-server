@@ -1,5 +1,9 @@
 package net.sonerapp.db_course_project.core.service;
 
+import java.util.stream.Stream;
+
+import org.springframework.data.domain.Pageable;
+
 import net.sonerapp.db_course_project.core.model.User;
 
 public interface UserService {
@@ -11,5 +15,7 @@ public interface UserService {
     void activateUser(String token);
 
     User getUser(long id);
+
+    Stream<User> getUserPage(Pageable pageable);
 
 }

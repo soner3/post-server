@@ -1,6 +1,9 @@
 package net.sonerapp.db_course_project.interfaces.controller;
 
+import java.util.stream.Stream;
+
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -52,8 +55,15 @@ public class UserController {
         return ResponseEntity.ok("User activated successfully");
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<Stream<UserDto>> getUserList(Pageable pageable) {
+        Stream<UserDto> userStream = userService.getUserPage(pageable)
+                .map(user -> conversionService.convert(user, UserDto.class));
+        return ResponseEntity.ok(userStream);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable("id") Long id) {
+    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
         User user = userService.getUser(id);
         UserDto userDto = conversionService.convert(user, UserDto.class);
         return ResponseEntity.ok(userDto);
