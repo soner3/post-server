@@ -11,8 +11,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import net.sonerapp.db_course_project.core.exceptions.DeleteEntityException;
 import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
+import net.sonerapp.db_course_project.infrastructure.exceptions.JwtClaimEmptyException;
+import net.sonerapp.db_course_project.infrastructure.exceptions.JwtExpiredException;
 
 @ControllerAdvice("net.sonerapp.db_course_project.interfaces")
 public class ApiControllerAdvice {
@@ -47,6 +51,38 @@ public class ApiControllerAdvice {
     public ResponseEntity<?> deleteEntityError(DeleteEntityException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Delete Entity Error");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> inavlidJwt(MalformedJwtException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("Malformed JWT");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> deleteEntityError(JwtExpiredException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        problem.setTitle("JWT Expired");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> deleteEntityError(UnsupportedJwtException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        problem.setTitle("Unsupported JWT");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> deleteEntityError(JwtClaimEmptyException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        problem.setTitle("JWT Claim Empty");
         problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
     }
