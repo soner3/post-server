@@ -8,4 +8,6 @@ public interface UserService {
 
     User createAdminUser(String username, String email, String password, String firstname, String lastname);
 
+    void activateUser(String token);
+
 }

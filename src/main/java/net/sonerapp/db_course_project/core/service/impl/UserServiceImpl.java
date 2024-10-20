@@ -1,19 +1,26 @@
 package net.sonerapp.db_course_project.core.service.impl;
 
+import java.time.Instant;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import net.sonerapp.db_course_project.application.exceptions.TokenAlreadyUsedException;
+import net.sonerapp.db_course_project.application.exceptions.TokenExpiredException;
+import net.sonerapp.db_course_project.application.exceptions.UnknownTokenException;
 import net.sonerapp.db_course_project.core.event.user.UserCreatedEvent;
 import net.sonerapp.db_course_project.core.exceptions.UserController.EmailExistsException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.UsernameExistsException;
 import net.sonerapp.db_course_project.core.model.Role;
 import net.sonerapp.db_course_project.core.model.User;
+import net.sonerapp.db_course_project.core.model.UserToken;
 import net.sonerapp.db_course_project.core.model.model_enums.AppRoles;
 import net.sonerapp.db_course_project.core.service.UserService;
 import net.sonerapp.db_course_project.infrastructure.repository.RoleRepository;
 import net.sonerapp.db_course_project.infrastructure.repository.UserRepository;
+import net.sonerapp.db_course_project.infrastructure.repository.UserTokenRepository;
 
 @Service
 @Slf4j
@@ -27,12 +34,16 @@ public class UserServiceImpl implements UserService {
 
     private final ApplicationEventPublisher publisher;
 
+    private final UserTokenRepository userTokenRepository;
+
     public UserServiceImpl(RoleRepository roleRepository, UserRepository userRepository,
-            PasswordEncoder passwordEncoder, ApplicationEventPublisher publisher) {
+            PasswordEncoder passwordEncoder, ApplicationEventPublisher publisher,
+            UserTokenRepository userTokenRepository) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.publisher = publisher;
+        this.userTokenRepository = userTokenRepository;
     }
 
     @Override
@@ -67,6 +78,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createAdminUser(String username, String email, String password, String firstname, String lastname) {
+
+        if (userRepository.existsByUsername(username)) {
+            throw new UsernameExistsException("The given username already exists.");
+        }
+
+        if (userRepository.existsByEmail(email)) {
+            throw new EmailExistsException("The given email already exists.");
+        }
+
         Role adminRole = roleRepository.findByRolename(AppRoles.ROLE_ADMIN)
                 .orElseGet(() -> roleRepository.save(new Role(AppRoles.ROLE_ADMIN)));
 
@@ -82,6 +102,29 @@ public class UserServiceImpl implements UserService {
         log.info("Admin User created for {}", createdUser.getFirstname() + " " + createdUser.getLastname());
 
         return createdUser;
+    }
+
+    @Override
+    public void activateUser(String token) {
+        UserToken userToken = userTokenRepository.findByToken(token)
+                .orElseThrow(() -> new UnknownTokenException("Token is unknown to the system"));
+
+        if (userToken.getExpiryDate().isBefore(Instant.now())) {
+            throw new TokenExpiredException("Token is expired");
+        }
+
+        if (userToken.isUsed()) {
+            throw new TokenAlreadyUsedException("Token has been used");
+        }
+
+        User user = userToken.getUser();
+
+        user.setEnabled(true);
+        userToken.setUsed(true);
+
+        userRepository.save(user);
+        userTokenRepository.save(userToken);
+
     }
 
 }
