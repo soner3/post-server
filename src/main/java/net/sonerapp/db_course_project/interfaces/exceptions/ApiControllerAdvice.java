@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import net.sonerapp.db_course_project.core.exceptions.DeleteEntityException;
 import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
-import net.sonerapp.db_course_project.core.exceptions.UserController.TokenExpiredException;
 
 @ControllerAdvice("net.sonerapp.db_course_project.interfaces")
 public class ApiControllerAdvice {
@@ -33,15 +32,6 @@ public class ApiControllerAdvice {
         });
         problem.setDetail("Validation failed for the following fields:");
         problem.setProperty("errors", errors);
-        return ResponseEntity.of(problem).build();
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<?> tokenExpiryError(TokenExpiredException e) {
-        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        problem.setTitle("Token Expired");
-        problem.setDetail(e.getMessage());
-
         return ResponseEntity.of(problem).build();
     }
 

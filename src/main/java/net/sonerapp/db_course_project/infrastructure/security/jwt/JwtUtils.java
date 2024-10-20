@@ -14,6 +14,8 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.sonerapp.db_course_project.infrastructure.exceptions.JwtClaimEmptyException;
+import net.sonerapp.db_course_project.infrastructure.exceptions.JwtExpiredException;
 
 @Service
 @Slf4j
@@ -93,17 +95,19 @@ public class JwtUtils {
             }
         } catch (MalformedJwtException e) {
             log.error("Invalid JWT token", e.getMessage());
+            throw new MalformedJwtException("Invalid JWT token");
         } catch (ExpiredJwtException e) {
             log.error("Token is Expired", e.getMessage());
+            throw new JwtExpiredException("JWT is Expired");
 
         } catch (UnsupportedJwtException e) {
             log.error("JWT token is not supported", e.getMessage());
+            throw new UnsupportedJwtException("JWT token is not supported");
 
         } catch (IllegalArgumentException e) {
             log.error("JWT Claims string is empty", e.getMessage());
+            throw new JwtClaimEmptyException("JWT Claims string is empty");
         }
-
-        return false;
 
     }
 
@@ -124,17 +128,20 @@ public class JwtUtils {
             }
         } catch (MalformedJwtException e) {
             log.error("Invalid JWT token", e.getMessage());
+            throw new MalformedJwtException("Invalid JWT token");
         } catch (ExpiredJwtException e) {
             log.error("Token is Expired", e.getMessage());
+            throw new JwtExpiredException("JWT is Expired");
 
         } catch (UnsupportedJwtException e) {
             log.error("JWT token is not supported", e.getMessage());
+            throw new UnsupportedJwtException("JWT token is not supported");
 
         } catch (IllegalArgumentException e) {
             log.error("JWT Claims string is empty", e.getMessage());
+            throw new JwtClaimEmptyException("JWT Claims string is empty");
         }
 
-        return false;
     }
 
     public String generateAccessTokenFromRefreshToken(String username, String refreshToken) {
