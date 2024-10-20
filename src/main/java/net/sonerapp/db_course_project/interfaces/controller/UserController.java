@@ -23,6 +23,7 @@ import net.sonerapp.db_course_project.application.dto.UserControllerDto.UserDto;
 import net.sonerapp.db_course_project.core.exceptions.UserController.EmailExistsException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.NoStrongPasswordException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.TokenAlreadyUsedException;
+import net.sonerapp.db_course_project.core.exceptions.UserController.UnknownTokenException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.UsernameExistsException;
 import net.sonerapp.db_course_project.core.model.User;
 import net.sonerapp.db_course_project.core.service.UserService;
@@ -86,6 +87,14 @@ public class UserController {
     public ResponseEntity<?> usernameExists(UsernameExistsException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Username already exists");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> unknownToken(UnknownTokenException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("Unknown Token");
         problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
     }
