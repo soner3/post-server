@@ -1,6 +1,7 @@
 package net.sonerapp.db_course_project.core.service.impl;
 
 import java.time.Instant;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.springframework.context.ApplicationEventPublisher;
@@ -9,12 +10,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
-import net.sonerapp.db_course_project.application.exceptions.TokenAlreadyUsedException;
-import net.sonerapp.db_course_project.application.exceptions.TokenExpiredException;
-import net.sonerapp.db_course_project.application.exceptions.UnknownTokenException;
 import net.sonerapp.db_course_project.core.event.user.UserCreatedEvent;
 import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.EmailExistsException;
+import net.sonerapp.db_course_project.core.exceptions.UserController.NoStrongPasswordException;
+import net.sonerapp.db_course_project.core.exceptions.UserController.TokenAlreadyUsedException;
+import net.sonerapp.db_course_project.core.exceptions.UserController.TokenExpiredException;
+import net.sonerapp.db_course_project.core.exceptions.UserController.UnknownTokenException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.UsernameExistsException;
 import net.sonerapp.db_course_project.core.model.Role;
 import net.sonerapp.db_course_project.core.model.User;
@@ -60,6 +62,11 @@ public class UserServiceImpl implements UserService {
             throw new EmailExistsException("The given email already exists.");
         }
 
+        if (!isPasswordStrong(password)) {
+            throw new NoStrongPasswordException(
+                    "your password must contain at least 8 characters and has uppcase, lowercase, digits and special characters.");
+        }
+
         Role userRole = roleRepository.findByRolename(AppRoles.ROLE_USER)
                 .orElseGet(() -> roleRepository.save(new Role(AppRoles.ROLE_USER)));
 
@@ -88,6 +95,11 @@ public class UserServiceImpl implements UserService {
 
         if (userRepository.existsByEmail(email)) {
             throw new EmailExistsException("The given email already exists.");
+        }
+
+        if (!isPasswordStrong(password)) {
+            throw new NoStrongPasswordException(
+                    "your password must contain at least 8 characters and has uppercase, lowercase, digits and special characters.");
         }
 
         Role adminRole = roleRepository.findByRolename(AppRoles.ROLE_ADMIN)
@@ -139,6 +151,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Stream<User> getUserPage(Pageable pageable) {
         return userRepository.findAll(pageable).get();
+    }
+
+    private boolean isPasswordStrong(String password) {
+        String passwordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$";
+        return Pattern.matches(passwordPattern, password);
     }
 
 }

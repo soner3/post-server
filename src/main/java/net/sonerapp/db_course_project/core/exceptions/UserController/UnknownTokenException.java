@@ -1,4 +1,4 @@
-package net.sonerapp.db_course_project.application.exceptions;
+package net.sonerapp.db_course_project.core.exceptions.UserController;
 
 public class UnknownTokenException extends RuntimeException {
 

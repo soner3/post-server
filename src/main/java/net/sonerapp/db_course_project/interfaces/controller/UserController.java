@@ -19,10 +19,9 @@ import jakarta.validation.Valid;
 import net.sonerapp.db_course_project.application.dto.UserControllerDto.ActivateUserDto;
 import net.sonerapp.db_course_project.application.dto.UserControllerDto.CreateUserDto;
 import net.sonerapp.db_course_project.application.dto.UserControllerDto.UserDto;
-import net.sonerapp.db_course_project.application.exceptions.NoStrongPasswordException;
-import net.sonerapp.db_course_project.application.exceptions.TokenAlreadyUsedException;
-import net.sonerapp.db_course_project.application.service.user.UserControllerService;
 import net.sonerapp.db_course_project.core.exceptions.UserController.EmailExistsException;
+import net.sonerapp.db_course_project.core.exceptions.UserController.NoStrongPasswordException;
+import net.sonerapp.db_course_project.core.exceptions.UserController.TokenAlreadyUsedException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.UsernameExistsException;
 import net.sonerapp.db_course_project.core.model.User;
 import net.sonerapp.db_course_project.core.service.UserService;
@@ -31,22 +30,20 @@ import net.sonerapp.db_course_project.core.service.UserService;
 @RequestMapping("/api/auth/user")
 public class UserController {
 
-    private final UserControllerService userControllerService;
-
     private final UserService userService;
 
     private final ConversionService conversionService;
 
-    public UserController(UserControllerService userControllerService, UserService userService,
-            ConversionService conversionService) {
-        this.userControllerService = userControllerService;
+    public UserController(UserService userService, ConversionService conversionService) {
         this.userService = userService;
         this.conversionService = conversionService;
     }
 
     @PostMapping("/create")
     public ResponseEntity<?> createUser(@RequestBody @Valid CreateUserDto userData) {
-        return userControllerService.createUser(userData);
+        userService.createUser(userData.username(), userData.email(), userData.password(), userData.firstname(),
+                userData.lastname());
+        return ResponseEntity.ok("User created successfully");
     }
 
     @PostMapping("/activate")

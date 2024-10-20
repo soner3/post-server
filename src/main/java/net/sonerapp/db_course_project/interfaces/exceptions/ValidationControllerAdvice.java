@@ -11,9 +11,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import net.sonerapp.db_course_project.application.exceptions.TokenExpiredException;
-import net.sonerapp.db_course_project.application.exceptions.UnknownTokenException;
 import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
+import net.sonerapp.db_course_project.core.exceptions.UserController.TokenExpiredException;
+import net.sonerapp.db_course_project.core.exceptions.UserController.UnknownTokenException;
 
 @ControllerAdvice("net.sonerapp.db_course_project.interfaces")
 public class ValidationControllerAdvice {
