@@ -145,9 +145,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new OutOfBoundsException("No user found with the id: " + id));
+    public User getUser(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new OutOfBoundsException("No user found with the id: " + username));
     }
 
     @Override
@@ -162,8 +162,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteUser(long id) {
-        int deleteSuccess = userRepository.deleteUserById(id);
+    public void deleteUser(String username) {
+        int deleteSuccess = userRepository.deleteUserByUsername(username);
         if (deleteSuccess == 0) {
             throw new DeleteEntityException("Entity could not be deleted or does not exist");
         }

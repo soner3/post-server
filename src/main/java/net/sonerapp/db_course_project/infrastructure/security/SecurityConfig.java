@@ -37,6 +37,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/public/**").permitAll()
                 .requestMatchers("/api/auth/jwt/**").permitAll()
                 .requestMatchers("/api/auth/user/public/**").permitAll()
+                .requestMatchers("/api/auth/user/list").hasRole("ADMIN")
                 .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

@@ -14,10 +14,10 @@ public interface UserService {
 
     void activateUser(String token);
 
-    User getUser(long id);
+    User getUser(String username);
 
     Stream<User> getUserPage(Pageable pageable);
 
-    void deleteUser(long id);
+    void deleteUser(String username);
 
 }
