@@ -42,14 +42,14 @@ public class UserController {
         this.conversionService = conversionService;
     }
 
-    @PostMapping("/create")
+    @PostMapping("/public/create")
     public ResponseEntity<String> createUser(@RequestBody @Valid CreateUserDto userData) {
         userService.createUser(userData.username(), userData.email(), userData.password(), userData.firstname(),
                 userData.lastname());
         return ResponseEntity.ok("User created successfully");
     }
 
-    @PostMapping("/activate")
+    @PostMapping("/public/activate")
     public ResponseEntity<String> activateUser(@RequestBody @Valid ActivateUserDto tokenData) {
         userService.activateUser(tokenData.token());
         return ResponseEntity.ok("User activated successfully");
@@ -75,7 +75,6 @@ public class UserController {
         return ResponseEntity.ok("User deleted successfully");
     }
 
-    // Exceptions
     @ExceptionHandler
     public ResponseEntity<?> emailExists(EmailExistsException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
