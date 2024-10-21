@@ -8,13 +8,13 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import net.sonerapp.db_course_project.core.email.EmailService;
 import net.sonerapp.db_course_project.core.model.Profile;
 import net.sonerapp.db_course_project.core.model.User;
 import net.sonerapp.db_course_project.core.model.UserToken;
 import net.sonerapp.db_course_project.core.model.model_enums.UserTokenType;
 import net.sonerapp.db_course_project.core.repository.ProfileRepository;
 import net.sonerapp.db_course_project.core.repository.UserTokenRepository;
-import net.sonerapp.db_course_project.infrastructure.email.EmailService;
 
 @Service
 @Slf4j
@@ -45,14 +45,45 @@ public class UserListener {
         profileRepository.save(newProfile);
         log.info("Profile created for User: {}", user.getFirstname() + " " + user.getLastname());
 
-        String token = UUID.randomUUID().toString();
-        UserToken userToken = new UserToken(token, user, UserTokenType.USER_ACTIVATION_TOKEN);
-
-        UserToken createdUserToken = userTokenRepository.save(userToken);
-
-        String activateUrl = frontendUrl + "/" + createdUserToken.getToken();
+        String activateUrl = getMailUrlFromUser(event.user(), UserTokenType.USER_ACTIVATION_TOKEN);
 
         emailService.sendActivateUserMail(user.getEmail(), activateUrl);
+        log.info("Activation Mail sended to: {}", user.getEmail());
+
+    }
+
+    @EventListener
+    @Async
+    public void sendResetPasswordMail(PasswordResetRequestEvent event) {
+        User user = event.user();
+
+        String resetUrl = getMailUrlFromUser(user, UserTokenType.PASSWORD_RESET_TOKEN);
+
+        emailService.sendPasswordResetMail(user.getEmail(), resetUrl);
+        log.info("Activation Mail sended to: {}", user.getEmail());
+
+    }
+
+    @EventListener
+    @Async
+    public void resendUserActivationMail(ResendActivationMailEvent event) {
+        User user = event.user();
+        String activateUrl = getMailUrlFromUser(user, UserTokenType.USER_ACTIVATION_TOKEN);
+
+        emailService.sendActivateUserMail(user.getEmail(), activateUrl);
+        log.info("Activation Mail sended to: {}", user.getEmail());
+
+    }
+
+    private String getMailUrlFromUser(User user, UserTokenType tokenType) {
+        String token = UUID.randomUUID().toString();
+
+        UserToken userToken = new UserToken(token, user, tokenType);
+
+        UserToken createdToken = userTokenRepository.save(userToken);
+        log.info("User Token created for User: {}", user.getFirstname() + " " + user.getLastname());
+
+        return frontendUrl + "/" + createdToken.getToken();
 
     }
 

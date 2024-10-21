@@ -8,16 +8,24 @@ import net.sonerapp.db_course_project.core.model.User;
 
 public interface UserService {
 
-    User createUser(String username, String email, String password, String firstname, String lastname);
+        User createUser(String username, String email, String password, String rePassword, String firstname,
+                        String lastname);
 
-    User createAdminUser(String username, String email, String password, String firstname, String lastname);
+        User createAdminUser(String username, String email, String password, String rePassword, String firstname,
+                        String lastname);
 
-    void activateUser(String token);
+        void activateUser(String token);
 
-    User getUser(String username);
+        User getUser(String username);
 
-    Stream<User> getUserPage(Pageable pageable);
+        Stream<User> getUserPage(Pageable pageable);
 
-    void deleteUser(String username);
+        void deleteUser(String username);
+
+        void processResetPasswordRequest(String email);
+
+        void resetPassword(String token, String password, String rePassword);
+
+        void resendActivationMail(String email);
 
 }

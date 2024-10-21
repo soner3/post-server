@@ -1,4 +1,4 @@
-package net.sonerapp.db_course_project.infrastructure.email;
+package net.sonerapp.db_course_project.core.email;
 
 public interface EmailService {
     void sendPasswordResetMail(String to, String resetUrl);

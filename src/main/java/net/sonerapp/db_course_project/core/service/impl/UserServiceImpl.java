@@ -11,15 +11,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
+import net.sonerapp.db_course_project.core.event.user.PasswordResetRequestEvent;
+import net.sonerapp.db_course_project.core.event.user.ResendActivationMailEvent;
 import net.sonerapp.db_course_project.core.event.user.UserCreatedEvent;
 import net.sonerapp.db_course_project.core.exceptions.DeleteEntityException;
 import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
+import net.sonerapp.db_course_project.core.exceptions.UserController.EmailDoesNotExistException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.EmailExistsException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.InvalidUserTokenTypeException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.NoStrongPasswordException;
+import net.sonerapp.db_course_project.core.exceptions.UserController.PasswordsDoNotMatchException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.TokenAlreadyUsedException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.TokenExpiredException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.UnknownTokenException;
+import net.sonerapp.db_course_project.core.exceptions.UserController.UserEnabledException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.UsernameExistsException;
 import net.sonerapp.db_course_project.core.model.Role;
 import net.sonerapp.db_course_project.core.model.User;
@@ -56,20 +61,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(String username, String email, String password, String firstname, String lastname) {
+    public User createUser(String username, String email, String password, String rePassword, String firstname,
+            String lastname) {
 
-        if (userRepository.existsByUsername(username)) {
-            throw new UsernameExistsException("The given username already exists.");
-        }
-
-        if (userRepository.existsByEmail(email)) {
-            throw new EmailExistsException("The given email already exists.");
-        }
-
-        if (!isPasswordStrong(password)) {
-            throw new NoStrongPasswordException(
-                    "your password must contain at least 8 characters and has uppcase, lowercase, digits and special characters.");
-        }
+        validateRegistrationCredentials(username, email, password, rePassword);
 
         Role userRole = roleRepository.findByRolename(AppRoles.ROLE_USER)
                 .orElseGet(() -> roleRepository.save(new Role(AppRoles.ROLE_USER)));
@@ -91,20 +86,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createAdminUser(String username, String email, String password, String firstname, String lastname) {
+    public User createAdminUser(String username, String email, String password, String rePassword, String firstname,
+            String lastname) {
 
-        if (userRepository.existsByUsername(username)) {
-            throw new UsernameExistsException("The given username already exists.");
-        }
-
-        if (userRepository.existsByEmail(email)) {
-            throw new EmailExistsException("The given email already exists.");
-        }
-
-        if (!isPasswordStrong(password)) {
-            throw new NoStrongPasswordException(
-                    "your password must contain at least 8 characters and has uppercase, lowercase, digits and special characters.");
-        }
+        validateRegistrationCredentials(username, email, password, rePassword);
 
         Role adminRole = roleRepository.findByRolename(AppRoles.ROLE_ADMIN)
                 .orElseGet(() -> roleRepository.save(new Role(AppRoles.ROLE_ADMIN)));
@@ -125,20 +110,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void activateUser(String token) {
-        UserToken userToken = userTokenRepository.findByToken(token)
-                .orElseThrow(() -> new UnknownTokenException("Token is unknown to the system"));
-
-        if (userToken.getExpiryDate().isBefore(Instant.now())) {
-            throw new TokenExpiredException("Token is expired");
-        }
-
-        if (userToken.isUsed()) {
-            throw new TokenAlreadyUsedException("Token has been used");
-        }
-
-        if (!userToken.getTokenType().equals(UserTokenType.USER_ACTIVATION_TOKEN)) {
-            throw new InvalidUserTokenTypeException("Invalid Token Type");
-        }
+        UserToken userToken = getValidToken(token, UserTokenType.USER_ACTIVATION_TOKEN);
 
         User user = userToken.getUser();
 
@@ -174,6 +146,89 @@ public class UserServiceImpl implements UserService {
             throw new DeleteEntityException("Entity could not be deleted or does not exist");
         }
 
+    }
+
+    @Override
+    public void processResetPasswordRequest(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EmailDoesNotExistException("No user found with the given mail: " + email));
+
+        publisher.publishEvent(new PasswordResetRequestEvent(user));
+
+    }
+
+    @Override
+    @Transactional
+    public void resetPassword(String token, String password, String rePassword) {
+        UserToken userToken = getValidToken(token, UserTokenType.PASSWORD_RESET_TOKEN);
+
+        if (!password.equals(rePassword)) {
+            throw new PasswordsDoNotMatchException("RePassword and Password do not match");
+        }
+
+        if (!isPasswordStrong(password)) {
+            throw new NoStrongPasswordException(
+                    "your password must contain at least 8 characters and has uppercase, lowercase, digits and special characters.");
+        }
+
+        User user = userToken.getUser();
+
+        user.setPassword(passwordEncoder.encode(password));
+
+        userToken.setUsed(true);
+
+        userRepository.save(user);
+        userTokenRepository.save(userToken);
+
+    }
+
+    @Override
+    public void resendActivationMail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EmailDoesNotExistException("No user found with the given mail: " + email));
+        if (user.isEnabled()) {
+            throw new UserEnabledException("User is already enabled");
+        }
+
+        publisher.publishEvent(new ResendActivationMailEvent(user));
+    }
+
+    private UserToken getValidToken(String token, UserTokenType tokenType) {
+        UserToken userToken = userTokenRepository.findByToken(token)
+                .orElseThrow(() -> new UnknownTokenException("Token is unknown to the system"));
+
+        if (userToken.getExpiryDate().isBefore(Instant.now())) {
+            throw new TokenExpiredException("Token is already expired");
+        }
+
+        if (userToken.isUsed()) {
+            throw new TokenAlreadyUsedException("Token has already been used");
+        }
+
+        if (!userToken.getTokenType().equals(tokenType)) {
+            throw new InvalidUserTokenTypeException("Invalid token type");
+        }
+
+        return userToken;
+    }
+
+    private void validateRegistrationCredentials(String username, String email, String password, String rePassword) {
+        if (!password.equals(rePassword)) {
+            throw new PasswordsDoNotMatchException("RePassword and Password do not match");
+        }
+
+        if (userRepository.existsByUsername(username)) {
+            throw new UsernameExistsException("The given username already exists.");
+        }
+
+        if (userRepository.existsByEmail(email)) {
+            throw new EmailExistsException("The given email already exists.");
+        }
+
+        if (!isPasswordStrong(password)) {
+            throw new NoStrongPasswordException(
+                    "your password must contain at least 8 characters and has uppercase, lowercase, digits and special characters.");
+        }
     }
 
 }

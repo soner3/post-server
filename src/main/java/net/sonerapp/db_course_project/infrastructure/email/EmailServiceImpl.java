@@ -5,6 +5,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import net.sonerapp.db_course_project.core.email.EmailService;
+
 @Service
 public class EmailServiceImpl implements EmailService {
 

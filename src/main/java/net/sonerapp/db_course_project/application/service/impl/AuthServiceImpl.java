@@ -16,6 +16,7 @@ import net.sonerapp.db_course_project.application.dto.OkDto;
 import net.sonerapp.db_course_project.application.dto.AuthControllerDto.LoginResponseDto;
 import net.sonerapp.db_course_project.application.exceptions.AuthenticationFailedException;
 import net.sonerapp.db_course_project.application.service.AuthService;
+import net.sonerapp.db_course_project.infrastructure.exceptions.UserNotEnabledException;
 import net.sonerapp.db_course_project.infrastructure.security.jwt.JwtUtils;
 
 @Service
@@ -42,6 +43,10 @@ public class AuthServiceImpl implements AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        if (!userDetails.isEnabled()) {
+            throw new UserNotEnabledException("User is not enabled");
+        }
 
         String refreshToken = jwtUtils.generateRefreshToken(userDetails);
         String accessToken = jwtUtils.generateAccessTokenFromRefreshToken(userDetails.getUsername(), refreshToken);
