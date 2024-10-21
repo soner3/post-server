@@ -17,7 +17,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import net.sonerapp.db_course_project.infrastructure.exceptions.UserNotEnabledException;
 
 @Component
 @Slf4j
@@ -46,10 +45,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 String username = jwtUtils.getUsernameFromToken(accessToken);
 
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-                if (!userDetails.isEnabled()) {
-                    throw new UserNotEnabledException("User is not enabled");
-                }
 
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());

@@ -7,16 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import net.sonerapp.db_course_project.application.dto.OkDto;
 import net.sonerapp.db_course_project.application.dto.AuthControllerDto.LoginResponseDto;
-import net.sonerapp.db_course_project.application.exceptions.AuthenticationFailedException;
 import net.sonerapp.db_course_project.application.service.AuthService;
-import net.sonerapp.db_course_project.infrastructure.exceptions.UserNotEnabledException;
 import net.sonerapp.db_course_project.infrastructure.security.jwt.JwtUtils;
 
 @Service
@@ -32,21 +29,20 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseEntity<LoginResponseDto> processLogin(String username, String password) {
-        Authentication authentication;
-        try {
-            authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (AuthenticationException e) {
-            throw new AuthenticationFailedException("Invalid login credentials");
-        }
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+
+        // if (!authentication.isAuthenticated()) {
+        // throw new AuthenticationFailedException("Invalid login credentials");
+        // }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        if (!userDetails.isEnabled()) {
-            throw new UserNotEnabledException("User is not enabled");
-        }
+        // if (!userDetails.isEnabled()) {
+        // throw new UserNotEnabledException("User is not enabled");
+        // }
 
         String refreshToken = jwtUtils.generateRefreshToken(userDetails);
         String accessToken = jwtUtils.generateAccessTokenFromRefreshToken(userDetails.getUsername(), refreshToken);

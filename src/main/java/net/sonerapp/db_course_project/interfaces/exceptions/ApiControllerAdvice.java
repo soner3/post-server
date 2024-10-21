@@ -17,7 +17,6 @@ import net.sonerapp.db_course_project.core.exceptions.DeleteEntityException;
 import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
 import net.sonerapp.db_course_project.infrastructure.exceptions.JwtClaimEmptyException;
 import net.sonerapp.db_course_project.infrastructure.exceptions.JwtExpiredException;
-import net.sonerapp.db_course_project.infrastructure.exceptions.UserNotEnabledException;
 
 @ControllerAdvice("net.sonerapp.db_course_project.interfaces")
 public class ApiControllerAdvice {
@@ -84,14 +83,6 @@ public class ApiControllerAdvice {
     public ResponseEntity<?> deleteEntityError(JwtClaimEmptyException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         problem.setTitle("JWT Claim Empty");
-        problem.setDetail(e.getMessage());
-        return ResponseEntity.of(problem).build();
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<?> userNotEnabled(UserNotEnabledException e) {
-        var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-        problem.setTitle("Not Enabled");
         problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
     }
