@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import net.sonerapp.db_course_project.application.dto.OkDto;
 import net.sonerapp.db_course_project.application.dto.AuthControllerDto.LoginResponseDto;
 import net.sonerapp.db_course_project.application.exceptions.AuthenticationFailedException;
 import net.sonerapp.db_course_project.application.service.AuthService;
@@ -57,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseEntity<String> processReAuthorization(String refreshToken) {
+    public ResponseEntity<OkDto> processReAuthorization(String refreshToken) {
         if (jwtUtils.validateRefreshToken(refreshToken)) {
             String username = jwtUtils.getUsernameFromToken(refreshToken);
             String newAccessToken = jwtUtils.generateAccessTokenFromRefreshToken(username, refreshToken);
@@ -66,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
             header.add(HttpHeaders.SET_COOKIE, generateHttpOnlyCookie(JwtUtils.ACCESS_COOKIE_KEY, newAccessToken,
                     jwtUtils.getAccessExpiryTime() / 1000).toString());
 
-            return ResponseEntity.ok().headers(header).body("Reauthorization successfull");
+            return ResponseEntity.ok().headers(header).body(new OkDto("Reauthorization successfull"));
         }
 
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

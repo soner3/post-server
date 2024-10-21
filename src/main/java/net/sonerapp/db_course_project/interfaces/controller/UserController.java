@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import net.sonerapp.db_course_project.application.dto.OkDto;
 import net.sonerapp.db_course_project.application.dto.UserControllerDto.ActivateUserDto;
 import net.sonerapp.db_course_project.application.dto.UserControllerDto.CreateUserDto;
 import net.sonerapp.db_course_project.application.dto.UserControllerDto.UserDto;
@@ -46,16 +47,16 @@ public class UserController {
     }
 
     @PostMapping("/public/create")
-    public ResponseEntity<String> createUser(@RequestBody @Valid CreateUserDto userData) {
+    public ResponseEntity<OkDto> createUser(@RequestBody @Valid CreateUserDto userData) {
         userService.createUser(userData.username(), userData.email(), userData.password(), userData.firstname(),
                 userData.lastname());
-        return ResponseEntity.ok("User created successfully");
+        return ResponseEntity.ok(new OkDto("User created successfully"));
     }
 
     @PostMapping("/public/activate")
-    public ResponseEntity<String> activateUser(@RequestBody @Valid ActivateUserDto tokenData) {
+    public ResponseEntity<OkDto> activateUser(@RequestBody @Valid ActivateUserDto tokenData) {
         userService.activateUser(tokenData.token());
-        return ResponseEntity.ok("User activated successfully");
+        return ResponseEntity.ok(new OkDto("User activated successfully"));
     }
 
     @GetMapping("/list")
@@ -74,9 +75,9 @@ public class UserController {
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteUser(@AuthenticationPrincipal UserDetails userdDetails) {
+    public ResponseEntity<OkDto> deleteUser(@AuthenticationPrincipal UserDetails userdDetails) {
         userService.deleteUser(userdDetails.getUsername());
-        return ResponseEntity.ok("User deleted successfully");
+        return ResponseEntity.ok(new OkDto("User deleted successfully"));
     }
 
     @ExceptionHandler
