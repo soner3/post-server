@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import net.sonerapp.db_course_project.core.model.User;
-import net.sonerapp.db_course_project.infrastructure.repository.UserRepository;
+import net.sonerapp.db_course_project.core.repository.UserRepository;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {

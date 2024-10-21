@@ -14,8 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import net.sonerapp.db_course_project.core.repository.UserRepository;
 import net.sonerapp.db_course_project.core.service.UserService;
-import net.sonerapp.db_course_project.infrastructure.repository.UserRepository;
 import net.sonerapp.db_course_project.infrastructure.security.jwt.JwtAuthEntryPoint;
 import net.sonerapp.db_course_project.infrastructure.security.jwt.JwtAuthFilter;
 

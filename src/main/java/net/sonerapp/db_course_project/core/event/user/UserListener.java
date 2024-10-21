@@ -12,9 +12,9 @@ import net.sonerapp.db_course_project.core.model.Profile;
 import net.sonerapp.db_course_project.core.model.User;
 import net.sonerapp.db_course_project.core.model.UserToken;
 import net.sonerapp.db_course_project.core.model.model_enums.UserTokenType;
+import net.sonerapp.db_course_project.core.repository.ProfileRepository;
+import net.sonerapp.db_course_project.core.repository.UserTokenRepository;
 import net.sonerapp.db_course_project.infrastructure.email.EmailService;
-import net.sonerapp.db_course_project.infrastructure.repository.ProfileRepository;
-import net.sonerapp.db_course_project.infrastructure.repository.UserTokenRepository;
 
 @Service
 @Slf4j

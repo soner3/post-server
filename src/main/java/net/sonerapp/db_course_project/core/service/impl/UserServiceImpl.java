@@ -26,10 +26,10 @@ import net.sonerapp.db_course_project.core.model.User;
 import net.sonerapp.db_course_project.core.model.UserToken;
 import net.sonerapp.db_course_project.core.model.model_enums.AppRoles;
 import net.sonerapp.db_course_project.core.model.model_enums.UserTokenType;
+import net.sonerapp.db_course_project.core.repository.RoleRepository;
+import net.sonerapp.db_course_project.core.repository.UserRepository;
+import net.sonerapp.db_course_project.core.repository.UserTokenRepository;
 import net.sonerapp.db_course_project.core.service.UserService;
-import net.sonerapp.db_course_project.infrastructure.repository.RoleRepository;
-import net.sonerapp.db_course_project.infrastructure.repository.UserRepository;
-import net.sonerapp.db_course_project.infrastructure.repository.UserTokenRepository;
 
 @Service
 @Slf4j

@@ -1,4 +1,4 @@
-package net.sonerapp.db_course_project.infrastructure.repository;
+package net.sonerapp.db_course_project.core.repository;
 
 import java.util.Optional;
 
