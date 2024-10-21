@@ -15,6 +15,7 @@ import net.sonerapp.db_course_project.core.event.user.UserCreatedEvent;
 import net.sonerapp.db_course_project.core.exceptions.DeleteEntityException;
 import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.EmailExistsException;
+import net.sonerapp.db_course_project.core.exceptions.UserController.InvalidUserTokenTypeException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.NoStrongPasswordException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.TokenAlreadyUsedException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.TokenExpiredException;
@@ -24,6 +25,7 @@ import net.sonerapp.db_course_project.core.model.Role;
 import net.sonerapp.db_course_project.core.model.User;
 import net.sonerapp.db_course_project.core.model.UserToken;
 import net.sonerapp.db_course_project.core.model.model_enums.AppRoles;
+import net.sonerapp.db_course_project.core.model.model_enums.UserTokenType;
 import net.sonerapp.db_course_project.core.service.UserService;
 import net.sonerapp.db_course_project.infrastructure.repository.RoleRepository;
 import net.sonerapp.db_course_project.infrastructure.repository.UserRepository;
@@ -132,6 +134,10 @@ public class UserServiceImpl implements UserService {
 
         if (userToken.isUsed()) {
             throw new TokenAlreadyUsedException("Token has been used");
+        }
+
+        if (!userToken.getTokenType().equals(UserTokenType.USER_ACTIVATION_TOKEN)) {
+            throw new InvalidUserTokenTypeException("Invalid Token Type");
         }
 
         User user = userToken.getUser();

@@ -23,6 +23,7 @@ import net.sonerapp.db_course_project.application.dto.UserControllerDto.Activate
 import net.sonerapp.db_course_project.application.dto.UserControllerDto.CreateUserDto;
 import net.sonerapp.db_course_project.application.dto.UserControllerDto.UserDto;
 import net.sonerapp.db_course_project.core.exceptions.UserController.EmailExistsException;
+import net.sonerapp.db_course_project.core.exceptions.UserController.InvalidUserTokenTypeException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.NoStrongPasswordException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.TokenAlreadyUsedException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.TokenExpiredException;
@@ -123,6 +124,14 @@ public class UserController {
     public ResponseEntity<?> tokenUsed(TokenAlreadyUsedException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Used Token");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> invalidToken(InvalidUserTokenTypeException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("Invalid Token");
         problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
     }
