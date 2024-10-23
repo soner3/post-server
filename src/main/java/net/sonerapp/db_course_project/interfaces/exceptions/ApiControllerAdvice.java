@@ -3,6 +3,7 @@ package net.sonerapp.db_course_project.interfaces.exceptions;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -84,6 +85,22 @@ public class ApiControllerAdvice {
         var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         problem.setTitle("JWT Claim Empty");
         problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> nullValues(NullPointerException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("Invalid Values");
+        problem.setDetail("Invalid Data has been sent. Assure that the sent data is in the right format.");
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> wrongData(DataIntegrityViolationException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("Invalid Values");
+        problem.setDetail("Invalid Data has been sent. Assure that the sent data is in the right format.");
         return ResponseEntity.of(problem).build();
     }
 
