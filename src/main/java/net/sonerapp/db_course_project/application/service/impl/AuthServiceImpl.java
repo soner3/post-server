@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import net.sonerapp.db_course_project.application.dto.OkDto;
 import net.sonerapp.db_course_project.application.dto.AuthControllerDto.LoginResponseDto;
+import net.sonerapp.db_course_project.application.exceptions.UserDoesNotExistException;
 import net.sonerapp.db_course_project.application.service.AuthService;
+import net.sonerapp.db_course_project.core.repository.UserRepository;
 import net.sonerapp.db_course_project.infrastructure.security.jwt.JwtUtils;
 
 @Service
@@ -21,10 +23,13 @@ public class AuthServiceImpl implements AuthService {
 
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
 
-    public AuthServiceImpl(JwtUtils jwtUtils, AuthenticationManager authenticationManager) {
+    public AuthServiceImpl(JwtUtils jwtUtils, AuthenticationManager authenticationManager,
+            UserRepository userRepository) {
         this.jwtUtils = jwtUtils;
         this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -32,17 +37,9 @@ public class AuthServiceImpl implements AuthService {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
-        // if (!authentication.isAuthenticated()) {
-        // throw new AuthenticationFailedException("Invalid login credentials");
-        // }
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        // if (!userDetails.isEnabled()) {
-        // throw new UserNotEnabledException("User is not enabled");
-        // }
 
         String refreshToken = jwtUtils.generateRefreshToken(userDetails);
         String accessToken = jwtUtils.generateAccessTokenFromRefreshToken(userDetails.getUsername(), refreshToken);
@@ -62,6 +59,9 @@ public class AuthServiceImpl implements AuthService {
     public ResponseEntity<OkDto> processReAuthorization(String refreshToken) {
         if (jwtUtils.validateRefreshToken(refreshToken)) {
             String username = jwtUtils.getUsernameFromToken(refreshToken);
+            if (!userRepository.existsByUsername(username)) {
+                throw new UserDoesNotExistException("The User does not exist anymore");
+            }
             String newAccessToken = jwtUtils.generateAccessTokenFromRefreshToken(username, refreshToken);
 
             HttpHeaders header = new HttpHeaders();

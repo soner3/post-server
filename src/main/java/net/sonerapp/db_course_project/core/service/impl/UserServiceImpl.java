@@ -20,6 +20,7 @@ import net.sonerapp.db_course_project.core.exceptions.UserController.EmailDoesNo
 import net.sonerapp.db_course_project.core.exceptions.UserController.EmailExistsException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.InvalidUserTokenTypeException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.NoStrongPasswordException;
+import net.sonerapp.db_course_project.core.exceptions.UserController.PasswordIsNullException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.PasswordsDoNotMatchException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.TokenAlreadyUsedException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.TokenExpiredException;
@@ -162,6 +163,10 @@ public class UserServiceImpl implements UserService {
     public void resetPassword(String token, String password, String rePassword) {
         UserToken userToken = getValidToken(token, UserTokenType.PASSWORD_RESET_TOKEN);
 
+        if (password == null || rePassword == null) {
+            throw new PasswordIsNullException("The password or the rePassword is Null");
+        }
+
         if (!password.equals(rePassword)) {
             throw new PasswordsDoNotMatchException("RePassword and Password do not match");
         }
@@ -213,6 +218,11 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateRegistrationCredentials(String username, String email, String password, String rePassword) {
+
+        if (password == null || rePassword == null) {
+            throw new PasswordIsNullException("The password or the rePassword is Null");
+        }
+
         if (!password.equals(rePassword)) {
             throw new PasswordsDoNotMatchException("RePassword and Password do not match");
         }

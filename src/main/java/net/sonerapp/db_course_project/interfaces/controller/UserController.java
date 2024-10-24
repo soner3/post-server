@@ -30,6 +30,7 @@ import net.sonerapp.db_course_project.core.exceptions.UserController.EmailDoesNo
 import net.sonerapp.db_course_project.core.exceptions.UserController.EmailExistsException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.InvalidUserTokenTypeException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.NoStrongPasswordException;
+import net.sonerapp.db_course_project.core.exceptions.UserController.PasswordIsNullException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.PasswordsDoNotMatchException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.TokenAlreadyUsedException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.TokenExpiredException;
@@ -183,6 +184,14 @@ public class UserController {
     public ResponseEntity<?> invalidToken(InvalidUserTokenTypeException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Invalid Token");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> passwordIsNull(PasswordIsNullException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("No Password sended");
         problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
     }

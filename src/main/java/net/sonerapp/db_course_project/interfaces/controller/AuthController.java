@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import net.sonerapp.db_course_project.application.dto.OkDto;
 import net.sonerapp.db_course_project.application.dto.AuthControllerDto.LoginRequestDto;
 import net.sonerapp.db_course_project.application.dto.AuthControllerDto.LoginResponseDto;
+import net.sonerapp.db_course_project.application.exceptions.UserDoesNotExistException;
 import net.sonerapp.db_course_project.application.service.AuthService;
 import net.sonerapp.db_course_project.infrastructure.security.jwt.JwtUtils;
 
@@ -43,6 +44,15 @@ public class AuthController {
     public ResponseEntity<?> authError(AuthenticationException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         problem.setTitle("Authentication Failed");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
+
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> noUser(UserDoesNotExistException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        problem.setTitle("No User Found");
         problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
 

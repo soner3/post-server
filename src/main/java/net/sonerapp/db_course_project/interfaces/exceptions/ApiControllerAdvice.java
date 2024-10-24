@@ -89,14 +89,6 @@ public class ApiControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> nullValues(NullPointerException e) {
-        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        problem.setTitle("Invalid Values");
-        problem.setDetail("Invalid Data has been sent. Assure that the sent data is in the right format.");
-        return ResponseEntity.of(problem).build();
-    }
-
-    @ExceptionHandler
     public ResponseEntity<?> wrongData(DataIntegrityViolationException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Invalid Values");
