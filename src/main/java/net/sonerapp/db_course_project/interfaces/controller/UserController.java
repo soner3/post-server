@@ -57,7 +57,7 @@ public class UserController {
     public ResponseEntity<OkDto> createUser(@RequestBody @Valid CreateUserDto userData) {
         userService.createUser(userData.username(), userData.email(), userData.password(), userData.rePassword(),
                 userData.firstname(), userData.lastname());
-        return ResponseEntity.ok(new OkDto("User created successfully"));
+        return ResponseEntity.ok(new OkDto("User created successfully. An activation mail has been sent"));
     }
 
     @PostMapping("/public/activate")
