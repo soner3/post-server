@@ -41,7 +41,7 @@ public class AuthController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> authError(AuthenticationException e) {
+    public ResponseEntity<ProblemDetail> authError(AuthenticationException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         problem.setTitle("Authentication Failed");
         problem.setDetail(e.getMessage());
@@ -50,7 +50,7 @@ public class AuthController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> noUser(UserDoesNotExistException e) {
+    public ResponseEntity<ProblemDetail> noUser(UserDoesNotExistException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         problem.setTitle("No User Found");
         problem.setDetail(e.getMessage());

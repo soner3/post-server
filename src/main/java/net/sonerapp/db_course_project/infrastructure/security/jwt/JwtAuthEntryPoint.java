@@ -29,8 +29,10 @@ public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
 
         final Map<String, Object> body = new HashMap<>();
         body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-        body.put("error", "Unauthorized");
-        body.put("message", authException.getMessage());
+        body.put("error", "Unauthorized Access");
+        body.put("message", "Full authentication is required to access this ressource");
+        body.put("path", request.getRequestURI());
+        body.put("timestamp", System.currentTimeMillis());
 
         final ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(response.getOutputStream(), body);

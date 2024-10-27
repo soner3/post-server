@@ -108,7 +108,7 @@ public class UserController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> emailExists(EmailExistsException e) {
+    public ResponseEntity<ProblemDetail> emailExists(EmailExistsException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Email already exists");
         problem.setDetail(e.getMessage());
@@ -116,7 +116,7 @@ public class UserController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> emailDoesNotExists(EmailDoesNotExistException e) {
+    public ResponseEntity<ProblemDetail> emailDoesNotExists(EmailDoesNotExistException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Email Does Not Exist");
         problem.setDetail(e.getMessage());
@@ -124,7 +124,7 @@ public class UserController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> alreadyEnabled(UserEnabledException e) {
+    public ResponseEntity<ProblemDetail> alreadyEnabled(UserEnabledException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("User Enabled");
         problem.setDetail(e.getMessage());
@@ -132,7 +132,7 @@ public class UserController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> passwordsDontMatch(PasswordsDoNotMatchException e) {
+    public ResponseEntity<ProblemDetail> passwordsDontMatch(PasswordsDoNotMatchException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Passwords Do Not Match");
         problem.setDetail(e.getMessage());
@@ -140,7 +140,7 @@ public class UserController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> usernameExists(UsernameExistsException e) {
+    public ResponseEntity<ProblemDetail> usernameExists(UsernameExistsException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Username Already Exists");
         problem.setDetail(e.getMessage());
@@ -148,7 +148,7 @@ public class UserController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> unknownToken(UnknownTokenException e) {
+    public ResponseEntity<ProblemDetail> unknownToken(UnknownTokenException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Unknown Token");
         problem.setDetail(e.getMessage());
@@ -156,7 +156,7 @@ public class UserController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> tokenExpiryError(TokenExpiredException e) {
+    public ResponseEntity<ProblemDetail> tokenExpiryError(TokenExpiredException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Token Expired");
         problem.setDetail(e.getMessage());
@@ -165,7 +165,7 @@ public class UserController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> weakPassword(NoStrongPasswordException e) {
+    public ResponseEntity<ProblemDetail> weakPassword(NoStrongPasswordException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Weak Password");
         problem.setDetail(e.getMessage());
@@ -173,7 +173,7 @@ public class UserController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> tokenUsed(TokenAlreadyUsedException e) {
+    public ResponseEntity<ProblemDetail> tokenUsed(TokenAlreadyUsedException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Used Token");
         problem.setDetail(e.getMessage());
@@ -181,7 +181,7 @@ public class UserController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> invalidToken(InvalidUserTokenTypeException e) {
+    public ResponseEntity<ProblemDetail> invalidToken(InvalidUserTokenTypeException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Invalid Token");
         problem.setDetail(e.getMessage());
@@ -189,7 +189,7 @@ public class UserController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> passwordIsNull(PasswordIsNullException e) {
+    public ResponseEntity<ProblemDetail> passwordIsNull(PasswordIsNullException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("No Password sended");
         problem.setDetail(e.getMessage());

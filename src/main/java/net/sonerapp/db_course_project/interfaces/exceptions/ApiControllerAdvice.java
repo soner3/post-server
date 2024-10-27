@@ -7,6 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -23,7 +24,7 @@ import net.sonerapp.db_course_project.infrastructure.exceptions.JwtExpiredExcept
 public class ApiControllerAdvice {
 
     @ExceptionHandler
-    public ResponseEntity<?> validateDto(MethodArgumentNotValidException e) {
+    public ResponseEntity<ProblemDetail> validateDto(MethodArgumentNotValidException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Field Error");
         Map<String, Object> errors = new HashMap<>();
@@ -41,7 +42,7 @@ public class ApiControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> entityNotFound(OutOfBoundsException e) {
+    public ResponseEntity<ProblemDetail> entityNotFound(OutOfBoundsException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         problem.setTitle("Entity Not Found");
         problem.setDetail(e.getMessage());
@@ -49,7 +50,7 @@ public class ApiControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> deleteEntityError(DeleteEntityException e) {
+    public ResponseEntity<ProblemDetail> deleteEntityError(DeleteEntityException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Delete Entity Error");
         problem.setDetail(e.getMessage());
@@ -57,7 +58,7 @@ public class ApiControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> inavlidJwt(MalformedJwtException e) {
+    public ResponseEntity<ProblemDetail> inavlidJwt(MalformedJwtException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Malformed JWT");
         problem.setDetail(e.getMessage());
@@ -65,7 +66,7 @@ public class ApiControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> deleteEntityError(JwtExpiredException e) {
+    public ResponseEntity<ProblemDetail> deleteEntityError(JwtExpiredException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         problem.setTitle("JWT Expired");
         problem.setDetail(e.getMessage());
@@ -73,7 +74,7 @@ public class ApiControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> deleteEntityError(UnsupportedJwtException e) {
+    public ResponseEntity<ProblemDetail> deleteEntityError(UnsupportedJwtException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         problem.setTitle("Unsupported JWT");
         problem.setDetail(e.getMessage());
@@ -81,7 +82,7 @@ public class ApiControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> deleteEntityError(JwtClaimEmptyException e) {
+    public ResponseEntity<ProblemDetail> deleteEntityError(JwtClaimEmptyException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         problem.setTitle("JWT Claim Empty");
         problem.setDetail(e.getMessage());
@@ -89,10 +90,18 @@ public class ApiControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<?> wrongData(DataIntegrityViolationException e) {
+    public ResponseEntity<ProblemDetail> wrongData(DataIntegrityViolationException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Invalid Values");
         problem.setDetail("Invalid Data has been sent. Assure that the sent data is in the right format.");
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ProblemDetail> noBody(HttpMessageNotReadableException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("No Request Body Found");
+        problem.setDetail("No readable body was found in the request.");
         return ResponseEntity.of(problem).build();
     }
 
