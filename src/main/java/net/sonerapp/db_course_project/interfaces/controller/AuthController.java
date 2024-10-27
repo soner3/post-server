@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import net.sonerapp.db_course_project.application.dto.OkDto;
 import net.sonerapp.db_course_project.application.dto.AuthControllerDto.LoginRequestDto;
@@ -25,7 +25,8 @@ import net.sonerapp.db_course_project.application.service.AuthService;
 import net.sonerapp.db_course_project.infrastructure.security.jwt.JwtUtils;
 
 @RestController
-@RequestMapping("/api/auth/jwt")
+@RequestMapping("/api/v1/auth/jwt")
+@Tag(name = "Auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -35,17 +36,20 @@ public class AuthController {
     }
 
     @PostMapping("/create")
-    @Operation(summary = "Authenticate user and return JWT access and refresh token", description = "Authenticates the user using username and password. Returns a JWT access and refresh Token for the user as http-only cookies. The access token expires in 10min and the refresh in 2d.")
-    @ApiResponses(value = {
+    @Operation(summary = "Authenticate user and return JWT access and refresh token", description = "Authenticates the user using username and password. Returns a JWT access and refresh Token for the user as http-only cookies. The access token expires in 10min and the refresh in 2d.", responses = {
             @ApiResponse(responseCode = "200", description = "Authentication successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseDto.class))),
-            @ApiResponse(responseCode = "401", description = "Authentication Failed due to invalid login credentials", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
-            @ApiResponse(responseCode = "401", description = "Authentication Failed because the user is not enabled", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class)))
-
+            @ApiResponse(responseCode = "401", description = "Authentication Failed", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid Request Body", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
     })
     public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto loginData) {
         return authService.processLogin(loginData.username(), loginData.password());
     }
 
+    @Operation(summary = "Reauthorize the user", description = "Uses the refresh token in the cookie to generate a new access token", responses = {
+            @ApiResponse(responseCode = "200", description = "Reauthorization successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseDto.class))),
+            @ApiResponse(responseCode = "401", description = "Reauthorization Failed", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid Cookie", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
+    })
     @PostMapping("/refresh")
     public ResponseEntity<OkDto> reAuthorize(
             @CookieValue(required = true, name = JwtUtils.REFRESH_COOKIE_KEY) String refreshToken) {

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import net.sonerapp.db_course_project.core.exceptions.DeleteEntityException;
 import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
 import net.sonerapp.db_course_project.infrastructure.exceptions.JwtClaimEmptyException;
@@ -103,6 +104,15 @@ public class ApiControllerAdvice {
         problem.setTitle("No Request Body Found");
         problem.setDetail("No readable body was found in the request.");
         return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ProblemDetail> noUser(SignatureException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        problem.setTitle("Invalid Signature");
+        problem.setDetail("The token is not signed with the signature used in the system.");
+        return ResponseEntity.of(problem).build();
+
     }
 
 }

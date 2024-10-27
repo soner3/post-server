@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import net.sonerapp.db_course_project.application.dto.OkDto;
 import net.sonerapp.db_course_project.application.dto.UserControllerDto.ActivateUserDto;
@@ -41,7 +42,8 @@ import net.sonerapp.db_course_project.core.model.User;
 import net.sonerapp.db_course_project.core.service.UserService;
 
 @RestController
-@RequestMapping("/api/auth/user")
+@RequestMapping("/api/v1/user")
+@Tag(name = "User")
 public class UserController {
 
     private final UserService userService;

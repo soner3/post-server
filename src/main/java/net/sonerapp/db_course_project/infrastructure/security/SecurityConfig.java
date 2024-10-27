@@ -36,14 +36,14 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(request -> request
-                .requestMatchers("/v1/api/**").permitAll()
-                .requestMatchers("/api/auth/jwt/**").permitAll()
-                .requestMatchers("/api/auth/user/public/**").permitAll()
+                .requestMatchers("/api/v1/**").permitAll()
+                .requestMatchers("/api/v1/auth/jwt/**").permitAll()
+                .requestMatchers("/api/v1/user/public/**").permitAll()
+                .requestMatchers("/api/v1/project/**").permitAll()
                 .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable())
-                // .csrf(csrf -> csrf.ignoringRequestMatchers("/api/public/**"))
                 .sessionManagement(session -> session.sessionCreationPolicy((SessionCreationPolicy.STATELESS)))
                 .build();
     }
