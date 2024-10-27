@@ -11,6 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import net.sonerapp.db_course_project.application.dto.OkDto;
 import net.sonerapp.db_course_project.application.dto.AuthControllerDto.LoginRequestDto;
@@ -30,6 +35,13 @@ public class AuthController {
     }
 
     @PostMapping("/create")
+    @Operation(summary = "Authenticate user and return JWT access and refresh token", description = "Authenticates the user using username and password. Returns a JWT access and refresh Token for the user as http-only cookies. The access token expires in 10min and the refresh in 2d.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Authentication successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseDto.class))),
+            @ApiResponse(responseCode = "401", description = "Authentication Failed due to invalid login credentials", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
+            @ApiResponse(responseCode = "401", description = "Authentication Failed because the user is not enabled", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class)))
+
+    })
     public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto loginData) {
         return authService.processLogin(loginData.username(), loginData.password());
     }
