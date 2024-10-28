@@ -19,6 +19,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import net.sonerapp.db_course_project.application.dto.OkDto;
@@ -55,6 +59,10 @@ public class UserController {
         this.conversionService = conversionService;
     }
 
+    @Operation(summary = "Create User", description = "Creates a user from the given data in the request body", responses = {
+            @ApiResponse(responseCode = "200", description = "User created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OkDto.class))),
+            @ApiResponse(responseCode = "400", description = "User creation failed", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class)))
+    })
     @PostMapping("/public/create")
     public ResponseEntity<OkDto> createUser(@RequestBody @Valid CreateUserDto userData) {
         userService.createUser(userData.username(), userData.email(), userData.password(), userData.rePassword(),
@@ -62,12 +70,20 @@ public class UserController {
         return ResponseEntity.ok(new OkDto("User created successfully. An activation mail has been sent"));
     }
 
+    @Operation(summary = "Activate User", description = "Activates the user by validating the given token in the request body", responses = {
+            @ApiResponse(responseCode = "200", description = "Activation successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OkDto.class))),
+            @ApiResponse(responseCode = "400", description = "Activation failed", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class)))
+    })
     @PostMapping("/public/activate")
     public ResponseEntity<OkDto> activateUser(@RequestBody @Valid ActivateUserDto tokenData) {
         userService.activateUser(tokenData.token());
         return ResponseEntity.ok(new OkDto("User activated successfully"));
     }
 
+    @Operation(summary = "Resends user activation mail", description = "Resends a activation mail by validating the email in the request body", responses = {
+            @ApiResponse(responseCode = "200", description = "User activation mail resent", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OkDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid email", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class)))
+    })
     @PostMapping("/public/activate/resend")
     public ResponseEntity<OkDto> resendActivationMail(@RequestBody @Valid EmailDto emailData) {
         userService.resendActivationMail(emailData.email());
@@ -75,6 +91,10 @@ public class UserController {
 
     }
 
+    @Operation(summary = "List of all users", description = "Lists all users of the database in pages", responses = {
+            @ApiResponse(responseCode = "200", description = "Request successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDto[].class))),
+            @ApiResponse(responseCode = "401", description = "User is not authorized to access this data", content = @Content(mediaType = "application/json"))
+    })
     @GetMapping("/list")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Stream<UserDto>> getUserList(Pageable pageable) {
@@ -83,6 +103,10 @@ public class UserController {
         return ResponseEntity.ok(userStream);
     }
 
+    @Operation(summary = "Get the logged in user", description = "Return the currently logged in user", responses = {
+            @ApiResponse(responseCode = "200", description = "Request successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDto.class))),
+            @ApiResponse(responseCode = "401", description = "User is not logged in", content = @Content(mediaType = "application/json"))
+    })
     @GetMapping
     public ResponseEntity<UserDto> getUser(@AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.getUser(userDetails.getUsername());
@@ -90,12 +114,20 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
+    @Operation(summary = "Deletes the logged in user", description = "Deletes the currently logged in user", responses = {
+            @ApiResponse(responseCode = "200", description = "Deletion successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OkDto.class))),
+            @ApiResponse(responseCode = "401", description = "User is not logged in", content = @Content(mediaType = "application/json"))
+    })
     @DeleteMapping
     public ResponseEntity<OkDto> deleteUser(@AuthenticationPrincipal UserDetails userdDetails) {
         userService.deleteUser(userdDetails.getUsername());
         return ResponseEntity.ok(new OkDto("User deleted successfully"));
     }
 
+    @Operation(summary = "Requests the reset of the password", description = "Sends a reset password mail for the mail in the request body", responses = {
+            @ApiResponse(responseCode = "200", description = "Reset mail has been sent", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OkDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid email", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class)))
+    })
     @PostMapping("/public/password/reset/request")
     public ResponseEntity<OkDto> resetPasswordRequest(
             @RequestBody @Valid EmailDto emailData) {
@@ -103,6 +135,10 @@ public class UserController {
         return ResponseEntity.ok(new OkDto("Password reset mail has been sent"));
     }
 
+    @Operation(summary = "Reset password", description = "Resets the password by validating the token and the new password", responses = {
+            @ApiResponse(responseCode = "200", description = "Password reset successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OkDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class)))
+    })
     @PutMapping("/public/password/reset")
     public ResponseEntity<OkDto> resetPassword(@RequestBody @Valid PasswordResetDto resetData) {
         userService.resetPassword(resetData.token(), resetData.password(), resetData.rePassword());
