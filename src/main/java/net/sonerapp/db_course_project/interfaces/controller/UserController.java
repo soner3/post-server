@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -114,14 +113,14 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    @Operation(summary = "Deletes the logged in user", description = "Deletes the currently logged in user", responses = {
-            @ApiResponse(responseCode = "200", description = "Deletion successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OkDto.class))),
+    @Operation(summary = "Deactivates the logged in user", description = "Deactivates the currently logged in user", responses = {
+            @ApiResponse(responseCode = "200", description = "Deactivating successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OkDto.class))),
             @ApiResponse(responseCode = "401", description = "User is not logged in", content = @Content(mediaType = "application/json"))
     })
-    @DeleteMapping
-    public ResponseEntity<OkDto> deleteUser(@AuthenticationPrincipal UserDetails userdDetails) {
-        userService.deleteUser(userdDetails.getUsername());
-        return ResponseEntity.ok(new OkDto("User deleted successfully"));
+    @PutMapping("/deactivate")
+    public ResponseEntity<OkDto> deactivateUser(@AuthenticationPrincipal UserDetails userdDetails) {
+        userService.deactivateUser(userdDetails.getUsername());
+        return ResponseEntity.ok(new OkDto("User deactivated successfully"));
     }
 
     @Operation(summary = "Requests the reset of the password", description = "Sends a reset password mail for the mail in the request body", responses = {

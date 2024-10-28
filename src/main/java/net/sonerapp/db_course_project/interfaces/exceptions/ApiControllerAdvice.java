@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -92,9 +93,9 @@ public class ApiControllerAdvice {
 
     @ExceptionHandler
     public ResponseEntity<ProblemDetail> wrongData(DataIntegrityViolationException e) {
-        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        problem.setTitle("Invalid Values");
-        problem.setDetail("Invalid Data has been sent. Assure that the sent data is in the right format.");
+        var problem = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        problem.setTitle("Query Failed");
+        problem.setDetail("SQL Query could not be successfully processed");
         return ResponseEntity.of(problem).build();
     }
 
@@ -107,10 +108,19 @@ public class ApiControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ProblemDetail> noUser(SignatureException e) {
+    public ResponseEntity<ProblemDetail> wrongSignature(SignatureException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         problem.setTitle("Invalid Signature");
         problem.setDetail("The token is not signed with the signature used in the system.");
+        return ResponseEntity.of(problem).build();
+
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ProblemDetail> usernameNotFound(UsernameNotFoundException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("User not found");
+        problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
 
     }

@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.sonerapp.db_course_project.core.event.user.PasswordResetRequestEvent;
 import net.sonerapp.db_course_project.core.event.user.ResendActivationMailEvent;
 import net.sonerapp.db_course_project.core.event.user.UserCreatedEvent;
-import net.sonerapp.db_course_project.core.exceptions.DeleteEntityException;
 import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.EmailDoesNotExistException;
 import net.sonerapp.db_course_project.core.exceptions.UserController.EmailExistsException;
@@ -141,11 +141,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteUser(String username) {
-        int deleteSuccess = userRepository.deleteUserByUsername(username);
-        if (deleteSuccess == 0) {
-            throw new DeleteEntityException("Entity could not be deleted or does not exist");
-        }
+    public void deactivateUser(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        user.setEnabled(false);
+        userRepository.save(user);
 
     }
 
@@ -196,6 +196,13 @@ public class UserServiceImpl implements UserService {
         }
 
         publisher.publishEvent(new ResendActivationMailEvent(user));
+    }
+
+    @Override
+    public boolean isUserEnabled(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("No User found with the name: " + username));
+        return user.isEnabled();
     }
 
     private UserToken getValidToken(String token, UserTokenType tokenType) {

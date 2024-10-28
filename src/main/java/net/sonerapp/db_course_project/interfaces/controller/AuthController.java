@@ -20,7 +20,7 @@ import jakarta.validation.Valid;
 import net.sonerapp.db_course_project.application.dto.OkDto;
 import net.sonerapp.db_course_project.application.dto.AuthControllerDto.LoginRequestDto;
 import net.sonerapp.db_course_project.application.dto.AuthControllerDto.LoginResponseDto;
-import net.sonerapp.db_course_project.application.exceptions.UserDoesNotExistException;
+import net.sonerapp.db_course_project.application.exceptions.UserDeactivatedException;
 import net.sonerapp.db_course_project.application.service.AuthService;
 import net.sonerapp.db_course_project.infrastructure.security.jwt.JwtUtils;
 
@@ -66,9 +66,9 @@ public class AuthController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ProblemDetail> noUser(UserDoesNotExistException e) {
+    public ResponseEntity<ProblemDetail> noUser(UserDeactivatedException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
-        problem.setTitle("No User Found");
+        problem.setTitle("User Deactivated");
         problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
 

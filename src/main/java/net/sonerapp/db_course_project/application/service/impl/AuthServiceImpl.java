@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 
 import net.sonerapp.db_course_project.application.dto.OkDto;
 import net.sonerapp.db_course_project.application.dto.AuthControllerDto.LoginResponseDto;
-import net.sonerapp.db_course_project.application.exceptions.UserDoesNotExistException;
+import net.sonerapp.db_course_project.application.exceptions.UserDeactivatedException;
 import net.sonerapp.db_course_project.application.service.AuthService;
-import net.sonerapp.db_course_project.core.repository.UserRepository;
+import net.sonerapp.db_course_project.core.service.UserService;
 import net.sonerapp.db_course_project.infrastructure.security.jwt.JwtUtils;
 
 @Service
@@ -23,13 +23,13 @@ public class AuthServiceImpl implements AuthService {
 
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     public AuthServiceImpl(JwtUtils jwtUtils, AuthenticationManager authenticationManager,
-            UserRepository userRepository) {
+            UserService userService) {
         this.jwtUtils = jwtUtils;
         this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -59,8 +59,9 @@ public class AuthServiceImpl implements AuthService {
     public ResponseEntity<OkDto> processReAuthorization(String refreshToken) {
         if (jwtUtils.validateRefreshToken(refreshToken)) {
             String username = jwtUtils.getUsernameFromToken(refreshToken);
-            if (!userRepository.existsByUsername(username)) {
-                throw new UserDoesNotExistException("The User does not exist anymore");
+
+            if (!userService.isUserEnabled(username)) {
+                throw new UserDeactivatedException("User is not enabled");
             }
             String newAccessToken = jwtUtils.generateAccessTokenFromRefreshToken(username, refreshToken);
 

@@ -20,7 +20,9 @@ public interface UserService {
 
         Stream<User> getUserPage(Pageable pageable);
 
-        void deleteUser(String username);
+        void deactivateUser(String username);
+
+        boolean isUserEnabled(String username);
 
         void processResetPasswordRequest(String email);
 
