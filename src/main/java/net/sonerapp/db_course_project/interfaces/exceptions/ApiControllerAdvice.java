@@ -93,9 +93,9 @@ public class ApiControllerAdvice {
 
     @ExceptionHandler
     public ResponseEntity<ProblemDetail> wrongData(DataIntegrityViolationException e) {
-        var problem = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-        problem.setTitle("Query Failed");
-        problem.setDetail("SQL Query could not be successfully processed");
+        var problem = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        problem.setTitle("SQL-Query Failed");
+        problem.setDetail("SQL-Query could not be successfully processed with the Data");
         return ResponseEntity.of(problem).build();
     }
 
