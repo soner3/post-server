@@ -12,7 +12,6 @@ import net.sonerapp.db_course_project.core.model.UserToken;
 public interface UserTokenMapper extends Converter<UserToken, UserTokenDto> {
 
     @Mapping(source = "used", target = "isUsed")
-    @Mapping(source = "user", target = "userDto")
     UserTokenDto convert(@NonNull UserToken userToken);
 
 }
