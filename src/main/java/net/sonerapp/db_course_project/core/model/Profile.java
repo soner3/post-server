@@ -29,7 +29,7 @@ public class Profile {
     private Long id;
 
     @Column(nullable = false, unique = true, updatable = false)
-    private UUID uuid;
+    private final UUID uuid = UUID.randomUUID();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -59,7 +59,7 @@ public class Profile {
 
     public Profile(User user) {
         this.user = user;
-        this.uuid = UUID.randomUUID();
+
     }
 
 }

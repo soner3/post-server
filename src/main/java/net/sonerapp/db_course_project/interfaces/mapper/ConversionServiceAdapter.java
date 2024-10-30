@@ -5,8 +5,10 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
 
+import net.sonerapp.db_course_project.application.dto.ProfileController.ProfileDto;
 import net.sonerapp.db_course_project.application.dto.UserControllerDto.UserDto;
 import net.sonerapp.db_course_project.application.dto.UserTokenControllerDto.UserTokenDto;
+import net.sonerapp.db_course_project.core.model.Profile;
 import net.sonerapp.db_course_project.core.model.User;
 import net.sonerapp.db_course_project.core.model.UserToken;
 
@@ -27,6 +29,11 @@ public class ConversionServiceAdapter {
     public UserDto mapUserToUserDto(final User source) {
         return (UserDto) conversionService.convert(source, TypeDescriptor.valueOf(User.class),
                 TypeDescriptor.valueOf(UserDto.class));
+    }
+
+    public ProfileDto mapProfileToProfileDto(final Profile source) {
+        return (ProfileDto) conversionService.convert(source, TypeDescriptor.valueOf(Profile.class),
+                TypeDescriptor.valueOf(ProfileDto.class));
     }
 
 }

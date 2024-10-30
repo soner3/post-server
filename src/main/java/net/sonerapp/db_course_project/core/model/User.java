@@ -33,7 +33,7 @@ public class User {
     private Long id;
 
     @Column(unique = true, nullable = false, updatable = false)
-    private UUID uuid;
+    private final UUID uuid = UUID.randomUUID();
 
     @Column(unique = true, nullable = false)
     private String username;
@@ -90,7 +90,7 @@ public class User {
         this.password = password;
         this.firstname = firstname;
         this.lastname = lastname;
-        this.uuid = UUID.randomUUID();
+
     }
 
 }
