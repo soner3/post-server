@@ -28,6 +28,12 @@ public class Like {
 
     private String comment;
 
+    public Like(String comment, Post post, Profile profile) {
+        this.comment = comment;
+        this.post = post;
+        this.profile = profile;
+    }
+
     @ManyToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -39,6 +45,7 @@ public class Like {
     @EqualsAndHashCode.Exclude
     @JoinColumn(name="profile_fk")
     private Profile profile;
+
 }
 
 
