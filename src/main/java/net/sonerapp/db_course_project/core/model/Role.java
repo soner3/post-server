@@ -30,7 +30,7 @@ public class Role {
     private Integer id;
 
     @Column(unique = true, nullable = false, updatable = false)
-    private UUID uuid;
+    private final UUID uuid = UUID.randomUUID();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -43,7 +43,7 @@ public class Role {
 
     public Role(AppRoles rolename) {
         this.rolename = rolename;
-        this.uuid = UUID.randomUUID();
+
     }
 
 }
