@@ -1,6 +1,8 @@
 package net.sonerapp.db_course_project.core.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,9 +16,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import net.sonerapp.db_course_project.core.model.model_enums.Gender;
 
 @Data
@@ -46,8 +51,20 @@ public class Profile {
     private String city;
 
     @OneToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @JoinColumn(name = "user_fk", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "profile")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Post> post = new ArrayList<>();
+
+    @OneToMany(mappedBy = "profile")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Like> like = new ArrayList<>();
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
