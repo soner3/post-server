@@ -18,6 +18,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import net.sonerapp.db_course_project.core.exceptions.DeleteEntityException;
+import net.sonerapp.db_course_project.core.exceptions.EntityNotFoundException;
 import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
 import net.sonerapp.db_course_project.infrastructure.exceptions.JwtClaimEmptyException;
 import net.sonerapp.db_course_project.infrastructure.exceptions.JwtExpiredException;
@@ -122,7 +123,14 @@ public class ApiControllerAdvice {
         problem.setTitle("User not found");
         problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
+    }
 
+    @ExceptionHandler
+    public ResponseEntity<ProblemDetail> entityNotFound(EntityNotFoundException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        problem.setTitle("Entity not found");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
     }
 
 }

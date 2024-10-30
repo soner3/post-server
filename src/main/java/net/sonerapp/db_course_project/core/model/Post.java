@@ -43,4 +43,11 @@ public class Post {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<Like> like = new ArrayList<>();
+
+    public Post(String message, Profile profile) {
+        this.message = message;
+        this.profile = profile;
+    }
+
+
 }
