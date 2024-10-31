@@ -1,6 +1,7 @@
 package net.sonerapp.db_course_project.interfaces.controller;
 
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import net.sonerapp.db_course_project.application.dto.UnauthorizedDto;
 import net.sonerapp.db_course_project.application.dto.PostController.CreatePostDto;
+import net.sonerapp.db_course_project.application.dto.PostController.PostCommentDto;
 import net.sonerapp.db_course_project.application.dto.PostController.PostDto;
+import net.sonerapp.db_course_project.application.dto.PostController.PostListItemDto;
 import net.sonerapp.db_course_project.core.model.Post;
 import net.sonerapp.db_course_project.core.service.PostService;
 
@@ -59,9 +62,16 @@ public class PostController {
             @ApiResponse(responseCode = "401", description = "Not Authenticated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class))),
     })
     @GetMapping
-    public ResponseEntity<Stream<PostDto>> getAllPosts(Pageable pageable) {
-        Stream<PostDto> postList = postService.getPostList(pageable)
-                .map(post -> conversionService.convert(post, PostDto.class));
+    public ResponseEntity<List<PostListItemDto>> getAllPosts(Pageable pageable) {
+        List<PostListItemDto> postList = new ArrayList<>();
+        postService.getPostList(pageable)
+                .forEach(post -> {
+                    List<PostCommentDto> commentList = post.getComments().stream()
+                            .map(comment -> conversionService.convert(comment, PostCommentDto.class)).toList();
+                    int likeCount = post.getLikes().size();
+                    PostDto postDto = conversionService.convert(post, PostDto.class);
+                    postList.add(new PostListItemDto(postDto, commentList, likeCount));
+                });
         return ResponseEntity.ok(postList);
     }
 

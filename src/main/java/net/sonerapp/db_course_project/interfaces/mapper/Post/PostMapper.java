@@ -1,4 +1,4 @@
-package net.sonerapp.db_course_project.interfaces.mapper;
+package net.sonerapp.db_course_project.interfaces.mapper.Post;
 
 import org.mapstruct.Mapper;
 import org.springframework.core.convert.converter.Converter;

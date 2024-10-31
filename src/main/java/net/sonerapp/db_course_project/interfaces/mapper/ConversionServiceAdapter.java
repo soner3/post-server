@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import net.sonerapp.db_course_project.application.dto.CommentControllerDto.CommentDto;
 import net.sonerapp.db_course_project.application.dto.LikeControllerDto.LikeDto;
+import net.sonerapp.db_course_project.application.dto.PostController.PostCommentDto;
 import net.sonerapp.db_course_project.application.dto.PostController.PostDto;
 import net.sonerapp.db_course_project.application.dto.ProfileController.ProfileDto;
 import net.sonerapp.db_course_project.application.dto.UserControllerDto.UserDto;
@@ -55,6 +56,11 @@ public class ConversionServiceAdapter {
     public CommentDto mapCommentToCommentDto(final Comment source) {
         return (CommentDto) conversionService.convert(source, TypeDescriptor.valueOf(Comment.class),
                 TypeDescriptor.valueOf(CommentDto.class));
+    }
+
+    public PostCommentDto mapCommentToPostCommentDto(final Comment source) {
+        return (PostCommentDto) conversionService.convert(source, TypeDescriptor.valueOf(Comment.class),
+                TypeDescriptor.valueOf(PostCommentDto.class));
     }
 
 }
