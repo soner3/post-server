@@ -25,7 +25,7 @@ public class Comment {
     @Column(nullable = false, unique = true, updatable = false)
     private final UUID uuid = UUID.randomUUID();
 
-    private String comment;
+    private String content;
 
     @ManyToOne
     @ToString.Exclude
@@ -39,9 +39,9 @@ public class Comment {
     @JoinColumn(name = "profile_fk")
     private Profile profile;
 
-    public Comment(Post post, Profile profile, String comment) {
+    public Comment(Post post, Profile profile, String content) {
         this.post = post;
         this.profile = profile;
-        this.comment = comment;
+        this.content = content;
     }
 }

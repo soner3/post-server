@@ -43,7 +43,6 @@ public class Role {
 
     public Role(AppRoles rolename) {
         this.rolename = rolename;
-
     }
 
 }

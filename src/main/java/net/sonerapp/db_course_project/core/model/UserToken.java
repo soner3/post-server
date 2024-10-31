@@ -32,7 +32,7 @@ public class UserToken {
     private Instant expiryDate;
 
     @Column(nullable = false)
-    private boolean isUsed;
+    private boolean used;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, updatable = false)
@@ -46,7 +46,7 @@ public class UserToken {
         this.token = token;
         this.user = user;
         this.tokenType = tokenType;
-        this.isUsed = false;
+        this.used = false;
         this.expiryDate = Instant.now().plus(15, ChronoUnit.MINUTES);
     }
 
