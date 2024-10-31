@@ -118,8 +118,8 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "User is not logged in", content = @Content(mediaType = "application/json"))
     })
     @PutMapping("/deactivate")
-    public ResponseEntity<OkDto> deactivateUser(@AuthenticationPrincipal UserDetails userdDetails) {
-        userService.deactivateUser(userdDetails.getUsername());
+    public ResponseEntity<OkDto> deactivateUser(@AuthenticationPrincipal UserDetails userDetails) {
+        userService.deactivateUser(userDetails.getUsername());
         return ResponseEntity.ok(new OkDto("User deactivated successfully"));
     }
 

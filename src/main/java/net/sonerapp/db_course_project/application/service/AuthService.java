@@ -9,4 +9,5 @@ public interface AuthService {
     ResponseEntity<LoginResponseDto> processLogin(String username, String password);
 
     ResponseEntity<OkDto> processReAuthorization(String refreshToken);
+
 }
