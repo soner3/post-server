@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.extern.slf4j.Slf4j;
 import net.sonerapp.db_course_project.core.event.user.PasswordResetRequestEvent;
 import net.sonerapp.db_course_project.core.event.user.ResendActivationMailEvent;
 import net.sonerapp.db_course_project.core.event.user.UserCreatedEvent;
@@ -38,8 +39,9 @@ import net.sonerapp.db_course_project.core.repository.UserTokenRepository;
 import net.sonerapp.db_course_project.core.service.UserService;
 
 @Service
-@Slf4j
 public class UserServiceImpl implements UserService {
+
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final RoleRepository roleRepository;
 

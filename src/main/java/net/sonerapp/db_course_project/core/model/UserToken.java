@@ -12,13 +12,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import net.sonerapp.db_course_project.core.model.model_enums.UserTokenType;
 
 @Entity
-@Data
-@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class UserToken {
 
     @Id
@@ -42,12 +42,63 @@ public class UserToken {
     @JoinColumn(name = "user_fk")
     private User user;
 
+    public UserToken() {
+    }
+
     public UserToken(String token, User user, UserTokenType tokenType) {
         this.token = token;
         this.user = user;
         this.tokenType = tokenType;
         this.used = false;
         this.expiryDate = Instant.now().plus(15, ChronoUnit.MINUTES);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public Instant getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(Instant expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public boolean isUsed() {
+        return used;
+    }
+
+    public void setUsed(boolean used) {
+        this.used = used;
+    }
+
+    public UserTokenType getTokenType() {
+        return tokenType;
+    }
+
+    public void setTokenType(UserTokenType tokenType) {
+        this.tokenType = tokenType;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

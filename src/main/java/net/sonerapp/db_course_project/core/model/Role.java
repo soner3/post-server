@@ -14,15 +14,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 import net.sonerapp.db_course_project.core.model.model_enums.AppRoles;
 
 @Entity
-@Data
-@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class Role {
 
     @Id
@@ -41,8 +39,39 @@ public class Role {
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     private Set<User> users = new HashSet<>();
 
+    public Role() {
+    }
+
     public Role(AppRoles rolename) {
         this.rolename = rolename;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public AppRoles getRolename() {
+        return rolename;
+    }
+
+    public void setRolename(AppRoles rolename) {
+        this.rolename = rolename;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 
 }

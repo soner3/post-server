@@ -2,12 +2,13 @@ package net.sonerapp.db_course_project.core.event.user;
 
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
 import net.sonerapp.db_course_project.core.email.EmailService;
 import net.sonerapp.db_course_project.core.model.Profile;
 import net.sonerapp.db_course_project.core.model.User;
@@ -17,8 +18,9 @@ import net.sonerapp.db_course_project.core.repository.ProfileRepository;
 import net.sonerapp.db_course_project.core.repository.UserTokenRepository;
 
 @Service
-@Slf4j
 public class UserListener {
+
+    private static final Logger log = LoggerFactory.getLogger(UserListener.class);
 
     private final ProfileRepository profileRepository;
 

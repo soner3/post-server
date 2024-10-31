@@ -3,6 +3,8 @@ package net.sonerapp.db_course_project.infrastructure.security.jwt;
 import java.security.KeyPair;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -12,15 +14,13 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import net.sonerapp.db_course_project.infrastructure.exceptions.JwtClaimEmptyException;
 import net.sonerapp.db_course_project.infrastructure.exceptions.JwtExpiredException;
 
 @Service
-@Slf4j
-@Getter
 public class JwtUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(JwtUtils.class);
 
     @Value("${jwt.refresh.expiration}")
     private int refreshExpiryTime;
@@ -152,6 +152,46 @@ public class JwtUtils {
         } else {
             return null;
         }
+    }
+
+    public int getRefreshExpiryTime() {
+        return refreshExpiryTime;
+    }
+
+    public int getAccessExpiryTime() {
+        return accessExpiryTime;
+    }
+
+    public String getHEADER_TYPE_KEY() {
+        return HEADER_TYPE_KEY;
+    }
+
+    public String getHEADER_TYPE_VALUE() {
+        return HEADER_TYPE_VALUE;
+    }
+
+    public String getTOKEN_TYPE_KEY() {
+        return TOKEN_TYPE_KEY;
+    }
+
+    public String getTOKEN_TYPE_ACCESS() {
+        return TOKEN_TYPE_ACCESS;
+    }
+
+    public String getTOKEN_TYPE_REFRESH() {
+        return TOKEN_TYPE_REFRESH;
+    }
+
+    public static String getAccessCookieKey() {
+        return ACCESS_COOKIE_KEY;
+    }
+
+    public static String getRefreshCookieKey() {
+        return REFRESH_COOKIE_KEY;
+    }
+
+    public KeyPair getKeyPair() {
+        return keyPair;
     }
 
 }
