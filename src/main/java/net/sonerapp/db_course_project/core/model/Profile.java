@@ -64,7 +64,12 @@ public class Profile {
     @OneToMany(mappedBy = "profile")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private List<Likes> like = new ArrayList<>();
+    private List<Likes> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "profile")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Comment> comments = new ArrayList<>();
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
