@@ -1,5 +1,7 @@
 package net.sonerapp.db_course_project.core.service.impl;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 import net.sonerapp.db_course_project.core.exceptions.EntityNotFoundException;
@@ -30,9 +32,9 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public Likes createLike(String username, String comment, long id) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No post found with the given id"));
+    public Likes createLike(String username, String comment, String uuid) {
+        Post post = postRepository.findByUuid(UUID.fromString(uuid))
+                .orElseThrow(() -> new EntityNotFoundException("No post found with the given uuid"));
         User user = userService.getUser(username);
         Profile profile = profileRepository.findByUser(user)
                 .orElseThrow(() -> new EntityNotFoundException("No profile found for the user"));

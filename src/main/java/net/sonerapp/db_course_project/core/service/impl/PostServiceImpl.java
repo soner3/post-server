@@ -1,5 +1,8 @@
 package net.sonerapp.db_course_project.core.service.impl;
 
+import java.util.stream.Stream;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -13,13 +16,11 @@ import net.sonerapp.db_course_project.core.service.PostService;
 import net.sonerapp.db_course_project.core.service.UserService;
 
 @Service
-public class PostServiceImpl implements PostService{
+public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final UserService userService;
-    private final  ProfileRepository profileRepository;
-
-    
+    private final ProfileRepository profileRepository;
 
     public PostServiceImpl(PostRepository postRepository, UserService userService,
             ProfileRepository profileRepository) {
@@ -28,15 +29,18 @@ public class PostServiceImpl implements PostService{
         this.profileRepository = profileRepository;
     }
 
-
-
     @Override
     public Post createPost(String msg, UserDetails userDetails) {
         User user = userService.getUser(userDetails.getUsername());
-        Profile profile = profileRepository.findByUser(user).orElseThrow(() -> new UsernameNotFoundException("No profile found for the user"));
+        Profile profile = profileRepository.findByUser(user)
+                .orElseThrow(() -> new UsernameNotFoundException("No profile found for the user"));
         Post post = new Post(msg, profile);
         return postRepository.save(post);
     }
 
+    @Override
+    public Stream<Post> getPostList(Pageable pageable) {
+        return postRepository.findAll(pageable).stream();
+    }
 
 }
