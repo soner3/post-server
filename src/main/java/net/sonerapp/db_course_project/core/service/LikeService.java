@@ -1,8 +1,8 @@
 package net.sonerapp.db_course_project.core.service;
 
-import net.sonerapp.db_course_project.core.model.Like;
+import net.sonerapp.db_course_project.core.model.Likes;;
 
 public interface LikeService {
-   Like createLike(String username,String comment, long id);
+   Likes createLike(String username, String comment, long id);
 
 }

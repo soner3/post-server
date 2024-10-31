@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import net.sonerapp.db_course_project.application.dto.PostController.CreatePostDto;
 import net.sonerapp.db_course_project.application.dto.PostController.PostDto;
@@ -17,6 +18,7 @@ import net.sonerapp.db_course_project.core.service.PostService;
 
 @RestController
 @RequestMapping("/api/v1/post")
+@Tag(name = "Post")
 public class PostController {
 
     private final PostService postService;

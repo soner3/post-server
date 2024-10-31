@@ -40,7 +40,7 @@ public class Post {
     @OneToMany(mappedBy = "post")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private List<Like> like = new ArrayList<>();
+    private List<Likes> like = new ArrayList<>();
 
     public Post(String message, Profile profile) {
         this.message = message;

@@ -17,7 +17,7 @@ import lombok.ToString;
 @Data
 @Entity
 @NoArgsConstructor
-public class Like {
+public class Likes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,24 +28,22 @@ public class Like {
 
     private String comment;
 
-    public Like(String comment, Post post, Profile profile) {
-        this.comment = comment;
-        this.post = post;
-        this.profile = profile;
-    }
-
     @ManyToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @JoinColumn(name="post_fk")
+    @JoinColumn(name = "post_fk")
     private Post post;
 
     @ManyToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @JoinColumn(name="profile_fk")
+    @JoinColumn(name = "profile_fk")
     private Profile profile;
 
+    public Likes(String comment, Post post, Profile profile) {
+        this.comment = comment;
+        this.post = post;
+        this.profile = profile;
+    }
+
 }
-
-

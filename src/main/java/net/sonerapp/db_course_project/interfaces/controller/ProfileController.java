@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import net.sonerapp.db_course_project.application.dto.ProfileController.ProfileDto;
 import net.sonerapp.db_course_project.application.dto.ProfileController.UpdateProfileDto;
 import net.sonerapp.db_course_project.core.model.Profile;
@@ -16,6 +18,7 @@ import net.sonerapp.db_course_project.core.service.ProfileService;
 
 @RestController
 @RequestMapping("/api/v1/profile")
+@Tag(name = "Profile")
 public class ProfileController {
 
     private final ProfileService profileService;
@@ -29,7 +32,7 @@ public class ProfileController {
 
     @PutMapping
     public ResponseEntity<ProfileDto> updateProfile(@AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody UpdateProfileDto updateProfileDto) {
+            @RequestBody @Valid UpdateProfileDto updateProfileDto) {
         Profile profile = profileService.updateProfile(userDetails, updateProfileDto);
         ProfileDto profileDto = conversionService.convert(profile, ProfileDto.class);
         return ResponseEntity.ok(profileDto);

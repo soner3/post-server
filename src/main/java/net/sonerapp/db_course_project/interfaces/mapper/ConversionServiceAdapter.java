@@ -5,10 +5,12 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
 
+import net.sonerapp.db_course_project.application.dto.LikeControllerDto.LikeDto;
 import net.sonerapp.db_course_project.application.dto.PostController.PostDto;
 import net.sonerapp.db_course_project.application.dto.ProfileController.ProfileDto;
 import net.sonerapp.db_course_project.application.dto.UserControllerDto.UserDto;
 import net.sonerapp.db_course_project.application.dto.UserTokenControllerDto.UserTokenDto;
+import net.sonerapp.db_course_project.core.model.Likes;
 import net.sonerapp.db_course_project.core.model.Post;
 import net.sonerapp.db_course_project.core.model.Profile;
 import net.sonerapp.db_course_project.core.model.User;
@@ -41,6 +43,11 @@ public class ConversionServiceAdapter {
     public PostDto mapPostToPostDto(final Post source) {
         return (PostDto) conversionService.convert(source, TypeDescriptor.valueOf(Post.class),
                 TypeDescriptor.valueOf(PostDto.class));
+    }
+
+    public LikeDto mapLikeToLikeDto(final Likes likes) {
+        return (LikeDto) conversionService.convert(likes, TypeDescriptor.valueOf(Likes.class),
+                TypeDescriptor.valueOf(LikeDto.class));
     }
 
 }
