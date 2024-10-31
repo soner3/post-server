@@ -32,7 +32,7 @@ public class LikeController {
     @PostMapping
     public ResponseEntity<LikeDto> createLike(@RequestBody @Valid CreateLikeDto createLikeDto,
             @AuthenticationPrincipal UserDetails userDetails) {
-        Likes like = likeService.createLike(userDetails.getUsername(), createLikeDto.comment(), createLikeDto.uuid());
+        Likes like = likeService.createLike(userDetails.getUsername(), createLikeDto.uuid());
         LikeDto likeDto = conversionService.convert(like, LikeDto.class);
         return ResponseEntity.ok(likeDto);
     }

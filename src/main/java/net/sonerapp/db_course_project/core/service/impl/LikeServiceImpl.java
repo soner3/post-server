@@ -32,13 +32,13 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public Likes createLike(String username, String comment, String uuid) {
+    public Likes createLike(String username, String uuid) {
         Post post = postRepository.findByUuid(UUID.fromString(uuid))
                 .orElseThrow(() -> new EntityNotFoundException("No post found with the given uuid"));
         User user = userService.getUser(username);
         Profile profile = profileRepository.findByUser(user)
                 .orElseThrow(() -> new EntityNotFoundException("No profile found for the user"));
-        Likes like = new Likes(comment, post, profile);
+        Likes like = new Likes(post, profile);
         return likeRepository.save(like);
     }
 }

@@ -26,8 +26,6 @@ public class Likes {
     @Column(nullable = false, unique = true, updatable = false)
     private final UUID uuid = UUID.randomUUID();
 
-    private String comment;
-
     @ManyToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -40,8 +38,7 @@ public class Likes {
     @JoinColumn(name = "profile_fk")
     private Profile profile;
 
-    public Likes(String comment, Post post, Profile profile) {
-        this.comment = comment;
+    public Likes(Post post, Profile profile) {
         this.post = post;
         this.profile = profile;
     }
