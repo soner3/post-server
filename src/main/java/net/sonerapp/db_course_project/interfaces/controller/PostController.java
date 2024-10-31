@@ -4,6 +4,7 @@ import java.util.stream.Stream;
 
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,8 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import net.sonerapp.db_course_project.application.dto.UnauthorizedDto;
 import net.sonerapp.db_course_project.application.dto.PostController.CreatePostDto;
 import net.sonerapp.db_course_project.application.dto.PostController.PostDto;
 import net.sonerapp.db_course_project.core.model.Post;
@@ -34,6 +40,11 @@ public class PostController {
         this.conversionService = conversionService;
     }
 
+    @Operation(summary = "Create Post", description = "Creates a post for the logged in user", responses = {
+            @ApiResponse(responseCode = "200", description = "Post created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDto.class))),
+            @ApiResponse(responseCode = "401", description = "Not Authenticated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid Request Body", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
+    })
     @PostMapping
     public ResponseEntity<PostDto> createPost(@RequestBody @Valid CreatePostDto createPostDto,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -43,6 +54,10 @@ public class PostController {
         return ResponseEntity.ok(postDto);
     }
 
+    @Operation(summary = "All Posts", description = "Returns all posts that exists in the db in form of pages", responses = {
+            @ApiResponse(responseCode = "200", description = "Request successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDto[].class))),
+            @ApiResponse(responseCode = "401", description = "Not Authenticated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class))),
+    })
     @GetMapping
     public ResponseEntity<Stream<PostDto>> getAllPosts(Pageable pageable) {
         Stream<PostDto> postList = postService.getPostList(pageable)
