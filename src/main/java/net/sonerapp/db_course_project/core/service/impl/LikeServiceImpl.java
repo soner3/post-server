@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import net.sonerapp.db_course_project.core.exceptions.EntityNotFoundException;
+import net.sonerapp.db_course_project.core.exceptions.IllegalUuidException;
 import net.sonerapp.db_course_project.core.model.Likes;
 import net.sonerapp.db_course_project.core.model.Post;
 import net.sonerapp.db_course_project.core.model.Profile;
@@ -33,7 +34,13 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     public Likes createLike(String username, String uuid) {
-        Post post = postRepository.findByUuid(UUID.fromString(uuid))
+        UUID newUuid = UUID.randomUUID();
+        try {
+            newUuid = UUID.fromString(uuid);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalUuidException("Could not convert UUID-String to UUID-Type");
+        }
+        Post post = postRepository.findByUuid(newUuid)
                 .orElseThrow(() -> new EntityNotFoundException("No post found with the given uuid"));
         User user = userService.getUser(username);
         Profile profile = profileRepository.findByUser(user)

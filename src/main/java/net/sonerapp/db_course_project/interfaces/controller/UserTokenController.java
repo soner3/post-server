@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import net.sonerapp.db_course_project.application.dto.UnauthorizedDto;
 import net.sonerapp.db_course_project.application.dto.UserTokenControllerDto.UserTokenDto;
@@ -35,7 +36,7 @@ public class UserTokenController {
     @Operation(summary = "All User Token", description = "Returns all User Token if the user has the admin role", responses = {
             @ApiResponse(responseCode = "200", description = "Request Successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserTokenDto[].class))),
             @ApiResponse(responseCode = "401", description = "User not unauthorized", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class)))
-    })
+    }, security = @SecurityRequirement(name = "accessAuth"))
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Stream<UserTokenDto>> getUserToken(Pageable pageable) {

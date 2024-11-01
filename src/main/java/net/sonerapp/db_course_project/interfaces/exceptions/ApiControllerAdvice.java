@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import io.jsonwebtoken.security.SignatureException;
 import net.sonerapp.db_course_project.application.exceptions.UserNotAuthenticatedException;
 import net.sonerapp.db_course_project.core.exceptions.DeleteEntityException;
 import net.sonerapp.db_course_project.core.exceptions.EntityNotFoundException;
+import net.sonerapp.db_course_project.core.exceptions.IllegalUuidException;
 import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
 import net.sonerapp.db_course_project.infrastructure.exceptions.JwtClaimEmptyException;
 import net.sonerapp.db_course_project.infrastructure.exceptions.JwtExpiredException;
@@ -135,10 +137,26 @@ public class ApiControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ProblemDetail> entityNotFound(UserNotAuthenticatedException e) {
+    public ResponseEntity<ProblemDetail> userNotAuthenticated(UserNotAuthenticatedException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         problem.setTitle("Not Authenticated");
         problem.setDetail("User is not authenticated to access this ressource");
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ProblemDetail> invalidProperties(PropertyReferenceException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("Invalid Propertys");
+        problem.setDetail("Invalid request properties has been sent ti this ressource");
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ProblemDetail> entityNotFound(IllegalUuidException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("Invalid UUID");
+        problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
     }
 

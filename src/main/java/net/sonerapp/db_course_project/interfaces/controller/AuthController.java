@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import net.sonerapp.db_course_project.application.dto.OkDto;
@@ -49,7 +50,7 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "Reauthorization successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseDto.class))),
             @ApiResponse(responseCode = "401", description = "Reauthorization Failed", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
             @ApiResponse(responseCode = "400", description = "Invalid Cookie", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
-    })
+    }, security = @SecurityRequirement(name = "refreshAuth"))
     @PostMapping("/refresh")
     public ResponseEntity<OkDto> reAuthorize(
             @CookieValue(required = true, name = JwtUtils.REFRESH_COOKIE_KEY) String refreshToken) {

@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import net.sonerapp.db_course_project.application.dto.OkDto;
@@ -94,7 +95,7 @@ public class UserController {
     @Operation(summary = "List of all users", description = "Lists all users of the database in pages", responses = {
             @ApiResponse(responseCode = "200", description = "Request successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDto[].class))),
             @ApiResponse(responseCode = "401", description = "User is not authorized to access this data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class)))
-    })
+    }, security = @SecurityRequirement(name = "accessAuth"))
     @GetMapping("/list")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Stream<UserDto>> getUserList(Pageable pageable) {
@@ -106,7 +107,7 @@ public class UserController {
     @Operation(summary = "Get the logged in user", description = "Return the currently logged in user", responses = {
             @ApiResponse(responseCode = "200", description = "Request successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDto.class))),
             @ApiResponse(responseCode = "401", description = "User is not logged in", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class)))
-    })
+    }, security = @SecurityRequirement(name = "accessAuth"))
     @GetMapping
     public ResponseEntity<UserDto> getUser(@AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.getUser(userDetails.getUsername());
@@ -117,7 +118,7 @@ public class UserController {
     @Operation(summary = "Deactivates the logged in user", description = "Deactivates the currently logged in user", responses = {
             @ApiResponse(responseCode = "200", description = "Deactivating successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OkDto.class))),
             @ApiResponse(responseCode = "401", description = "User is not logged in", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class)))
-    })
+    }, security = @SecurityRequirement(name = "accessAuth"))
     @PutMapping("/deactivate")
     public ResponseEntity<OkDto> deactivateUser(@AuthenticationPrincipal UserDetails userDetails) {
         userService.deactivateUser(userDetails.getUsername());
