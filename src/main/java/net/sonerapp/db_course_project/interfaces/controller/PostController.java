@@ -37,7 +37,7 @@ import net.sonerapp.db_course_project.core.model.Post;
 import net.sonerapp.db_course_project.core.service.PostService;
 
 @RestController
-@RequestMapping("/api/v1/post")
+@RequestMapping("/api/v2/post")
 @Tag(name = "Post")
 public class PostController {
 
