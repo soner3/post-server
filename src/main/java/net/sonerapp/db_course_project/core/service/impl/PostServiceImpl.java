@@ -1,12 +1,18 @@
 package net.sonerapp.db_course_project.core.service.impl;
 
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import net.sonerapp.db_course_project.core.exceptions.EntityNotFoundException;
+import net.sonerapp.db_course_project.core.exceptions.IllegalUuidException;
+import net.sonerapp.db_course_project.core.exceptions.NoEntityDeletedException;
+import net.sonerapp.db_course_project.core.exceptions.PostController.InvalidPostOwnerException;
 import net.sonerapp.db_course_project.core.model.Post;
 import net.sonerapp.db_course_project.core.model.Profile;
 import net.sonerapp.db_course_project.core.model.User;
@@ -41,6 +47,38 @@ public class PostServiceImpl implements PostService {
     @Override
     public Stream<Post> getPostList(Pageable pageable) {
         return postRepository.findAll(pageable).stream();
+    }
+
+    @Override
+    @Transactional
+    public void deletePost(String uuid, UserDetails userDetails) {
+        UUID newUuid = UUID.randomUUID();
+        try {
+            newUuid = UUID.fromString(uuid);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalUuidException("Could not convert UUID-String to UUID-Type");
+        }
+        User user = userService.getUser(userDetails.getUsername());
+        Profile userProfile = profileRepository.findByUser(user)
+                .orElseThrow(() -> new UsernameNotFoundException("No profile found for the user"));
+
+        Post post = postRepository.findByUuid(newUuid)
+                .orElseThrow(() -> new EntityNotFoundException("No post found with the given UUID"));
+
+        Profile postProfile = post.getProfile();
+
+        if (postProfile.getUuid().equals(userProfile.getUuid())) {
+            int deletetEntityCount = postRepository.deleteByUuid(newUuid);
+
+            if (deletetEntityCount > 0) {
+                return;
+            } else {
+                throw new NoEntityDeletedException("No entity found to delete");
+            }
+        } else {
+            throw new InvalidPostOwnerException("The user is not owner of the post");
+        }
+
     }
 
 }

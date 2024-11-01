@@ -12,4 +12,7 @@ public interface PostService {
     Post createPost(String msg, UserDetails userDetails);
 
     Stream<Post> getPostList(Pageable pageable);
+
+    void deletePost(String uuid, UserDetails userDetails);
+
 }

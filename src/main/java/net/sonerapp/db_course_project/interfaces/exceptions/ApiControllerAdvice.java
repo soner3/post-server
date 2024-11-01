@@ -22,6 +22,7 @@ import net.sonerapp.db_course_project.application.exceptions.UserNotAuthenticate
 import net.sonerapp.db_course_project.core.exceptions.DeleteEntityException;
 import net.sonerapp.db_course_project.core.exceptions.EntityNotFoundException;
 import net.sonerapp.db_course_project.core.exceptions.IllegalUuidException;
+import net.sonerapp.db_course_project.core.exceptions.NoEntityDeletedException;
 import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
 import net.sonerapp.db_course_project.infrastructure.exceptions.JwtClaimEmptyException;
 import net.sonerapp.db_course_project.infrastructure.exceptions.JwtExpiredException;
@@ -123,7 +124,7 @@ public class ApiControllerAdvice {
     @ExceptionHandler
     public ResponseEntity<ProblemDetail> usernameNotFound(UsernameNotFoundException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        problem.setTitle("User not found");
+        problem.setTitle("User Not Found");
         problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
     }
@@ -131,7 +132,7 @@ public class ApiControllerAdvice {
     @ExceptionHandler
     public ResponseEntity<ProblemDetail> entityNotFound(EntityNotFoundException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
-        problem.setTitle("Entity not found");
+        problem.setTitle("Entity Not Found");
         problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
     }
@@ -153,9 +154,17 @@ public class ApiControllerAdvice {
     }
 
     @ExceptionHandler
-    public ResponseEntity<ProblemDetail> entityNotFound(IllegalUuidException e) {
+    public ResponseEntity<ProblemDetail> illegalUuid(IllegalUuidException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Invalid UUID");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ProblemDetail> entityDeletionFailed(NoEntityDeletedException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("Delete Failed");
         problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
     }

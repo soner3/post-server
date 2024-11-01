@@ -9,4 +9,6 @@ import net.sonerapp.db_course_project.core.model.Post;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findByUuid(UUID uuid);
+
+    int deleteByUuid(UUID uuid);
 }

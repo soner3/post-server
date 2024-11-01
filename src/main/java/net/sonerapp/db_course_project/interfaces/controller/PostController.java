@@ -5,10 +5,13 @@ import java.util.List;
 
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,11 +25,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import net.sonerapp.db_course_project.application.dto.OkDto;
 import net.sonerapp.db_course_project.application.dto.UnauthorizedDto;
 import net.sonerapp.db_course_project.application.dto.PostController.CreatePostDto;
+import net.sonerapp.db_course_project.application.dto.PostController.DeletePostDto;
 import net.sonerapp.db_course_project.application.dto.PostController.PostCommentDto;
 import net.sonerapp.db_course_project.application.dto.PostController.PostDto;
 import net.sonerapp.db_course_project.application.dto.PostController.PostListItemDto;
+import net.sonerapp.db_course_project.core.exceptions.PostController.InvalidPostOwnerException;
 import net.sonerapp.db_course_project.core.model.Post;
 import net.sonerapp.db_course_project.core.service.PostService;
 
@@ -74,6 +80,27 @@ public class PostController {
                     postList.add(new PostListItemDto(postDto, commentList, likeCount));
                 });
         return ResponseEntity.ok(postList);
+    }
+
+    @Operation(summary = "Delete Post", description = "Deletes the post if it is from the logged in user", responses = {
+            @ApiResponse(responseCode = "200", description = "Post deleted", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OkDto.class))),
+            @ApiResponse(responseCode = "401", description = "Not Authenticated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid Request Body", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
+            @ApiResponse(responseCode = "403", description = "Invalid Post Owner", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
+    }, security = @SecurityRequirement(name = "accessAuth"))
+    @DeleteMapping
+    public ResponseEntity<OkDto> deletePost(@RequestBody @Valid DeletePostDto deletePostDto,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        postService.deletePost(deletePostDto.uuid(), userDetails);
+        return ResponseEntity.ok(new OkDto("Post deleted successfully"));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ProblemDetail> invalidPostOwner(InvalidPostOwnerException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        problem.setTitle("Invalid Post Owner");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
     }
 
 }
