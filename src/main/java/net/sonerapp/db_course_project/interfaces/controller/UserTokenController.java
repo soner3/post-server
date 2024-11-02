@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import net.sonerapp.db_course_project.application.dto.UnauthorizedDto;
 import net.sonerapp.db_course_project.application.dto.UserTokenControllerDto.UserTokenDto;
 import net.sonerapp.db_course_project.core.service.UserTokenService;
+import net.sonerapp.db_course_project.infrastructure.annotations.RoleValidator;
 
 @RestController
 @RequestMapping("/api/v1/user-token")
@@ -38,6 +39,7 @@ public class UserTokenController {
             @ApiResponse(responseCode = "401", description = "User not unauthorized", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class)))
     }, security = @SecurityRequirement(name = "accessAuth"))
     @GetMapping
+    @RoleValidator
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Stream<UserTokenDto>> getUserToken(Pageable pageable) {
         Stream<UserTokenDto> userTokenStream = userTokenService.getUserTokenPage(pageable)

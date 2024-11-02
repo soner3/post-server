@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import net.sonerapp.db_course_project.application.dto.UnauthorizedDto;
 import net.sonerapp.db_course_project.application.dto.RoleController.RoleDto;
 import net.sonerapp.db_course_project.core.service.RoleService;
+import net.sonerapp.db_course_project.infrastructure.annotations.RoleValidator;
 
 @RestController
 @RequestMapping("/api/v1/role")
@@ -39,6 +40,7 @@ public class RoleController {
             @ApiResponse(responseCode = "401", description = "User not unauthorized", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class)))
     }, security = @SecurityRequirement(name = "accessAuth"))
     @GetMapping
+    @RoleValidator
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Stream<RoleDto>> getMethodName(Pageable pageable) {
         Stream<RoleDto> roleList = roleService.getRolePage(pageable)

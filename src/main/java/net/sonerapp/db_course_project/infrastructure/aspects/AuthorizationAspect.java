@@ -15,9 +15,9 @@ import net.sonerapp.db_course_project.infrastructure.exceptions.AccessDeniedExce
 @Aspect
 @Component
 @Order(1)
-public class AuthorizeAspect {
+public class AuthorizationAspect {
 
-    private final Logger log = LoggerFactory.getLogger(AuthorizeAspect.class);
+    private final Logger log = LoggerFactory.getLogger(AuthorizationAspect.class);
 
     @Before("@annotation(net.sonerapp.db_course_project.infrastructure.annotations.RoleValidator)")
     public void validateAdminRole() {
