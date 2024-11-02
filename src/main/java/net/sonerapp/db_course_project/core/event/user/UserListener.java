@@ -2,8 +2,6 @@ package net.sonerapp.db_course_project.core.event.user;
 
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -19,8 +17,6 @@ import net.sonerapp.db_course_project.core.repository.UserTokenRepository;
 
 @Service
 public class UserListener {
-
-    private static final Logger log = LoggerFactory.getLogger(UserListener.class);
 
     private final ProfileRepository profileRepository;
 
@@ -45,12 +41,10 @@ public class UserListener {
         Profile newProfile = new Profile(user);
 
         profileRepository.save(newProfile);
-        log.info("Profile created for User: {}", user.getFirstname() + " " + user.getLastname());
 
         String activateUrl = getMailUrlFromUser(event.user(), UserTokenType.USER_ACTIVATION_TOKEN);
 
         emailService.sendActivateUserMail(user.getEmail(), activateUrl);
-        log.info("Activation Mail sended to: {}", user.getEmail());
 
     }
 
@@ -62,7 +56,6 @@ public class UserListener {
         String resetUrl = getMailUrlFromUser(user, UserTokenType.PASSWORD_RESET_TOKEN);
 
         emailService.sendPasswordResetMail(user.getEmail(), resetUrl);
-        log.info("Activation Mail sended to: {}", user.getEmail());
 
     }
 
@@ -73,7 +66,6 @@ public class UserListener {
         String activateUrl = getMailUrlFromUser(user, UserTokenType.USER_ACTIVATION_TOKEN);
 
         emailService.sendActivateUserMail(user.getEmail(), activateUrl);
-        log.info("Activation Mail sended to: {}", user.getEmail());
 
     }
 
@@ -83,7 +75,6 @@ public class UserListener {
         UserToken userToken = new UserToken(token, user, tokenType);
 
         UserToken createdToken = userTokenRepository.save(userToken);
-        log.info("User Token created for User: {}", user.getFirstname() + " " + user.getLastname());
 
         return frontendUrl + "/" + createdToken.getToken();
 

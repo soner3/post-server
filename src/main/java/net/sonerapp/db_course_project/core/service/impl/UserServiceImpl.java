@@ -4,8 +4,6 @@ import java.time.Instant;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -40,8 +38,6 @@ import net.sonerapp.db_course_project.core.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
-
-    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final RoleRepository roleRepository;
 
@@ -81,7 +77,6 @@ public class UserServiceImpl implements UserService {
         user.setEnabled(false);
 
         User createdUser = userRepository.save(user);
-        log.info("User created for {}", createdUser.getFirstname() + " " + createdUser.getLastname());
 
         publisher.publishEvent(new UserCreatedEvent(createdUser));
 
@@ -106,7 +101,6 @@ public class UserServiceImpl implements UserService {
         adminUser.setEnabled(true);
 
         User createdUser = userRepository.save(adminUser);
-        log.info("Admin User created for {}", createdUser.getFirstname() + " " + createdUser.getLastname());
 
         return createdUser;
     }

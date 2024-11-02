@@ -10,12 +10,14 @@ import net.sonerapp.db_course_project.application.dto.LikeControllerDto.LikeDto;
 import net.sonerapp.db_course_project.application.dto.PostController.PostCommentDto;
 import net.sonerapp.db_course_project.application.dto.PostController.PostDto;
 import net.sonerapp.db_course_project.application.dto.ProfileController.ProfileDto;
+import net.sonerapp.db_course_project.application.dto.RoleController.RoleDto;
 import net.sonerapp.db_course_project.application.dto.UserControllerDto.UserDto;
 import net.sonerapp.db_course_project.application.dto.UserTokenControllerDto.UserTokenDto;
 import net.sonerapp.db_course_project.core.model.Comment;
 import net.sonerapp.db_course_project.core.model.Likes;
 import net.sonerapp.db_course_project.core.model.Post;
 import net.sonerapp.db_course_project.core.model.Profile;
+import net.sonerapp.db_course_project.core.model.Role;
 import net.sonerapp.db_course_project.core.model.User;
 import net.sonerapp.db_course_project.core.model.UserToken;
 
@@ -61,6 +63,11 @@ public class ConversionServiceAdapter {
     public PostCommentDto mapCommentToPostCommentDto(final Comment source) {
         return (PostCommentDto) conversionService.convert(source, TypeDescriptor.valueOf(Comment.class),
                 TypeDescriptor.valueOf(PostCommentDto.class));
+    }
+
+    public RoleDto mapRoleToRoleDto(final Role source) {
+        return (RoleDto) conversionService.convert(source, TypeDescriptor.valueOf(Role.class),
+                TypeDescriptor.valueOf(RoleDto.class));
     }
 
 }

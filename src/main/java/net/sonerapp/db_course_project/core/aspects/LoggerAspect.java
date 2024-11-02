@@ -18,7 +18,7 @@ public class LoggerAspect {
 
     private Logger log = LoggerFactory.getLogger(LoggerAspect.class.getName());
 
-    @Around("execution(* net.sonerapp.db_course_project.core.service..*.*(..)) || execution(* net.sonerapp.db_course_project.core.event..*.*(..))")
+    @Around("execution(* net.sonerapp.db_course_project.core.service.impl..*.*(..)) || execution(* net.sonerapp.db_course_project.core.event..*.*(..))")
     public Object logLogic(ProceedingJoinPoint joinPoint) throws Throwable {
         log.info(joinPoint.getSignature().toString() + " method execution start");
         Instant start = Instant.now();
