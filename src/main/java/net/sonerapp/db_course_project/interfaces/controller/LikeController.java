@@ -43,7 +43,7 @@ public class LikeController {
             @ApiResponse(responseCode = "200", description = "Like created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LikeDto.class))),
             @ApiResponse(responseCode = "401", description = "Not Authenticated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid Request Body", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
-            @ApiResponse(responseCode = "403", description = "Illegal Like Request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden Like", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
     }, security = @SecurityRequirement(name = "accessAuth"))
     @PostMapping
     public ResponseEntity<LikeDto> createLike(@RequestBody @Valid CreateLikeDto createLikeDto,
