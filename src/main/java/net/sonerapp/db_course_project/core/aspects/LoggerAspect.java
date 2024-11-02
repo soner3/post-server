@@ -32,7 +32,7 @@ public class LoggerAspect {
 
     @AfterThrowing(value = "execution(* net.sonerapp.db_course_project.core..*.*(..))", throwing = "ex")
     public void logException(JoinPoint joinPoint, Exception ex) {
-        log.warn(joinPoint.getSignature() + " An exception is thrown due to: " + ex.getMessage());
+        log.warn(joinPoint.getSignature() + " An exception is thrown. Reason: " + ex.getMessage());
 
     }
 

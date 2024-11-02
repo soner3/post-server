@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import net.sonerapp.db_course_project.core.exceptions.EntityNotFoundException;
 import net.sonerapp.db_course_project.core.exceptions.IllegalUuidException;
+import net.sonerapp.db_course_project.core.exceptions.LikeController.IllegalLikeException;
 import net.sonerapp.db_course_project.core.model.Likes;
 import net.sonerapp.db_course_project.core.model.Post;
 import net.sonerapp.db_course_project.core.model.Profile;
@@ -45,6 +46,10 @@ public class LikeServiceImpl implements LikeService {
         User user = userService.getUser(username);
         Profile profile = profileRepository.findByUser(user)
                 .orElseThrow(() -> new EntityNotFoundException("No profile found for the user"));
+
+        if (likeRepository.existsByProfileAndPost(profile, post)) {
+            throw new IllegalLikeException("Profile already liked this post");
+        }
         Likes like = new Likes(post, profile);
         return likeRepository.save(like);
     }
