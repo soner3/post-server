@@ -45,6 +45,7 @@ import net.sonerapp.db_course_project.core.exceptions.UserController.UserEnabled
 import net.sonerapp.db_course_project.core.exceptions.UserController.UsernameExistsException;
 import net.sonerapp.db_course_project.core.model.User;
 import net.sonerapp.db_course_project.core.service.UserService;
+import net.sonerapp.db_course_project.infrastructure.annotations.RoleValidator;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -97,6 +98,7 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "User is not authorized to access this data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class)))
     }, security = @SecurityRequirement(name = "accessAuth"))
     @GetMapping("/list")
+    @RoleValidator
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Stream<UserDto>> getUserList(Pageable pageable) {
         Stream<UserDto> userStream = userService.getUserPage(pageable)

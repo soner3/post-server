@@ -24,6 +24,7 @@ import net.sonerapp.db_course_project.core.exceptions.EntityNotFoundException;
 import net.sonerapp.db_course_project.core.exceptions.IllegalUuidException;
 import net.sonerapp.db_course_project.core.exceptions.NoEntityDeletedException;
 import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
+import net.sonerapp.db_course_project.infrastructure.exceptions.AccessDeniedException;
 import net.sonerapp.db_course_project.infrastructure.exceptions.JwtClaimEmptyException;
 import net.sonerapp.db_course_project.infrastructure.exceptions.JwtExpiredException;
 
@@ -173,6 +174,14 @@ public class ApiControllerAdvice {
     public ResponseEntity<ProblemDetail> convertetToNull(ConvertetToNullException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         problem.setTitle("Conversion Failed");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ProblemDetail> accessDenied(AccessDeniedException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        problem.setTitle("Access Denied");
         problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
     }
