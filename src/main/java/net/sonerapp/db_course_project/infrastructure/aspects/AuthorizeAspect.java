@@ -21,9 +21,10 @@ public class AuthorizeAspect {
 
     @Before("@annotation(net.sonerapp.db_course_project.infrastructure.annotations.RoleValidator)")
     public void validateAdminRole() {
-
+        log.info("Validating Role");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !hasAdminRole(authentication)) {
+            log.warn("Denied Access to this ressource by throwing: " + AccessDeniedException.class.toString());
             throw new AccessDeniedException("Access to this ressource is denied");
         }
 
