@@ -169,4 +169,12 @@ public class ApiControllerAdvice {
         return ResponseEntity.of(problem).build();
     }
 
+    @ExceptionHandler
+    public ResponseEntity<ProblemDetail> convertetToNull(ConvertetToNullException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        problem.setTitle("Conversion Failed");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
+    }
+
 }

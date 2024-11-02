@@ -27,6 +27,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import net.sonerapp.db_course_project.application.dto.OkDto;
 import net.sonerapp.db_course_project.application.dto.UnauthorizedDto;
+import net.sonerapp.db_course_project.application.dto.CommentControllerDto.CommentDto;
 import net.sonerapp.db_course_project.application.dto.PostController.CreatePostDto;
 import net.sonerapp.db_course_project.application.dto.PostController.DeletePostDto;
 import net.sonerapp.db_course_project.application.dto.PostController.PostCommentDto;
@@ -35,6 +36,7 @@ import net.sonerapp.db_course_project.application.dto.PostController.PostListIte
 import net.sonerapp.db_course_project.core.exceptions.PostController.InvalidPostOwnerException;
 import net.sonerapp.db_course_project.core.model.Post;
 import net.sonerapp.db_course_project.core.service.PostService;
+import net.sonerapp.db_course_project.interfaces.exceptions.ConvertetToNullException;
 
 @RestController
 @RequestMapping("/api/v2/post")
@@ -74,7 +76,16 @@ public class PostController {
         postService.getPostList(pageable)
                 .forEach(post -> {
                     List<PostCommentDto> commentList = post.getComments().stream()
-                            .map(comment -> conversionService.convert(comment, PostCommentDto.class)).toList();
+                            .map(comment -> {
+                                CommentDto commentDto = conversionService.convert(comment, CommentDto.class);
+                                if (commentDto != null) {
+                                    return new PostCommentDto(commentDto.uuid(), commentDto.content(),
+                                            commentDto.profile());
+                                } else {
+                                    throw new ConvertetToNullException(
+                                            "The Comment entity could not be successfully convertet to DTO");
+                                }
+                            }).toList();
                     int likeCount = post.getLikes().size();
                     PostDto postDto = conversionService.convert(post, PostDto.class);
                     postList.add(new PostListItemDto(postDto, commentList, likeCount));
