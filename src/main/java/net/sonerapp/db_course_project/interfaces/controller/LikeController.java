@@ -30,7 +30,7 @@ import net.sonerapp.db_course_project.core.model.Likes;
 import net.sonerapp.db_course_project.core.service.LikeService;
 
 @RestController
-@RequestMapping("/api/v1/like")
+@RequestMapping("/api/v2/like")
 @Tag(name = "Likes")
 public class LikeController {
 
