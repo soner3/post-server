@@ -28,10 +28,12 @@ import jakarta.validation.Valid;
 import net.sonerapp.db_course_project.application.dto.OkDto;
 import net.sonerapp.db_course_project.application.dto.UnauthorizedDto;
 import net.sonerapp.db_course_project.application.dto.CommentControllerDto.CommentDto;
+import net.sonerapp.db_course_project.application.dto.LikeControllerDto.LikeDto;
 import net.sonerapp.db_course_project.application.dto.PostController.CreatePostDto;
 import net.sonerapp.db_course_project.application.dto.PostController.DeletePostDto;
 import net.sonerapp.db_course_project.application.dto.PostController.PostCommentDto;
 import net.sonerapp.db_course_project.application.dto.PostController.PostDto;
+import net.sonerapp.db_course_project.application.dto.PostController.PostLikeDto;
 import net.sonerapp.db_course_project.application.dto.PostController.PostListItemDto;
 import net.sonerapp.db_course_project.core.exceptions.PostController.InvalidPostOwnerException;
 import net.sonerapp.db_course_project.core.model.Post;
@@ -86,9 +88,19 @@ public class PostController {
                                             "The Comment entity could not be successfully convertet to DTO");
                                 }
                             }).toList();
-                    int likeCount = post.getLikes().size();
+
+                    List<PostLikeDto> likeList = post.getLikes().stream().map(like -> {
+                        LikeDto likeDto = conversionService.convert(like, LikeDto.class);
+                        if (likeDto != null) {
+                            return new PostLikeDto(likeDto.uuid(), likeDto.profile());
+                        } else {
+                            throw new ConvertetToNullException(
+                                    "The Comment entity could not be successfully convertet to DTO");
+                        }
+                    }).toList();
+                    int likeCount = likeList.size();
                     PostDto postDto = conversionService.convert(post, PostDto.class);
-                    postList.add(new PostListItemDto(postDto, commentList, likeCount));
+                    postList.add(new PostListItemDto(postDto, commentList, likeCount, likeList));
                 });
         return ResponseEntity.ok(postList);
     }

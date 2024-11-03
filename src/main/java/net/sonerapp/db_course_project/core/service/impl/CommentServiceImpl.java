@@ -34,7 +34,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment createComment(String username, String uuid, String comment) {
-        UUID newUuid = UUID.randomUUID();
+        UUID newUuid = null;
         try {
             newUuid = UUID.fromString(uuid);
         } catch (IllegalArgumentException e) {

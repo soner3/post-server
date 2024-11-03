@@ -10,4 +10,6 @@ public interface LikeRepository extends JpaRepository<Likes, Long> {
 
     boolean existsByProfileAndPost(Profile profile, Post post);
 
+    int deleteByProfileAndPost(Profile profile, Post post);
+
 }

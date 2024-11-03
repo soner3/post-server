@@ -52,7 +52,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void deletePost(String uuid, UserDetails userDetails) {
-        UUID newUuid = UUID.randomUUID();
+        UUID newUuid = null;
         try {
             newUuid = UUID.fromString(uuid);
         } catch (IllegalArgumentException e) {
@@ -68,9 +68,9 @@ public class PostServiceImpl implements PostService {
         Profile postProfile = post.getProfile();
 
         if (postProfile.getUuid().equals(userProfile.getUuid())) {
-            int deletetEntityCount = postRepository.deleteByUuid(newUuid);
+            int deletedEntityCount = postRepository.deleteByUuid(newUuid);
 
-            if (deletetEntityCount > 0) {
+            if (deletedEntityCount > 0) {
                 return;
             } else {
                 throw new NoEntityDeletedException("No entity found to delete");

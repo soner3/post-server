@@ -2,10 +2,13 @@ package net.sonerapp.db_course_project.core.service.impl;
 
 import java.util.UUID;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import net.sonerapp.db_course_project.core.exceptions.EntityNotFoundException;
 import net.sonerapp.db_course_project.core.exceptions.IllegalUuidException;
+import net.sonerapp.db_course_project.core.exceptions.NoEntityDeletedException;
 import net.sonerapp.db_course_project.core.exceptions.LikeController.IllegalLikeException;
 import net.sonerapp.db_course_project.core.model.Likes;
 import net.sonerapp.db_course_project.core.model.Post;
@@ -35,7 +38,7 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     public Likes createLike(String username, String uuid) {
-        UUID newUuid = UUID.randomUUID();
+        UUID newUuid = null;
         try {
             newUuid = UUID.fromString(uuid);
         } catch (IllegalArgumentException e) {
@@ -52,5 +55,31 @@ public class LikeServiceImpl implements LikeService {
         }
         Likes like = new Likes(post, profile);
         return likeRepository.save(like);
+    }
+
+    @Override
+    @Transactional
+    public void deleteLike(String uuid, UserDetails userDetails) {
+        UUID newUuid = null;
+        try {
+            newUuid = UUID.fromString(uuid);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalUuidException("Could not convert UUID-String to UUID-Type");
+        }
+
+        Post post = postRepository.findByUuid(newUuid)
+                .orElseThrow(() -> new EntityNotFoundException("No post found with the given uuid"));
+        User user = userService.getUser(userDetails.getUsername());
+        Profile profile = profileRepository.findByUser(user)
+                .orElseThrow(() -> new EntityNotFoundException("No profile found for the user"));
+
+        int deletedEntityCount = likeRepository.deleteByProfileAndPost(profile, post);
+
+        if (deletedEntityCount > 0) {
+            return;
+        } else {
+            throw new NoEntityDeletedException("No entity found to delete");
+        }
+
     }
 }
