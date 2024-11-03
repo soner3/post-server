@@ -44,7 +44,7 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<CommentDto> createComment(@RequestBody @Valid CreateCommentDto createCommentDto,
             @AuthenticationPrincipal UserDetails userDetails) {
-        Comment comment = commentService.createComment(userDetails.getUsername(), createCommentDto.uuid(),
+        Comment comment = commentService.createComment(userDetails.getUsername(), createCommentDto.postUuid(),
                 createCommentDto.comment());
         CommentDto commentDto = conversionService.convert(comment, CommentDto.class);
 

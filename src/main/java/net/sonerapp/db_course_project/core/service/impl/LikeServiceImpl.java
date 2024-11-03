@@ -78,7 +78,7 @@ public class LikeServiceImpl implements LikeService {
         if (deletedEntityCount > 0) {
             return;
         } else {
-            throw new NoEntityDeletedException("No entity found to delete");
+            throw new NoEntityDeletedException("No like from the the profile to the given post was found to delete");
         }
 
     }
