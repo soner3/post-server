@@ -114,7 +114,7 @@ public class PostController {
     @DeleteMapping
     public ResponseEntity<OkDto> deletePost(@RequestBody @Valid DeletePostDto deletePostDto,
             @AuthenticationPrincipal UserDetails userDetails) {
-        postService.deletePost(deletePostDto.uuid(), userDetails);
+        postService.deletePost(deletePostDto.postUuid(), userDetails);
         return ResponseEntity.ok(new OkDto("Post deleted successfully"));
     }
 

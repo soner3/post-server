@@ -14,18 +14,18 @@ import org.springframework.stereotype.Service;
 import net.sonerapp.db_course_project.application.dto.OkDto;
 import net.sonerapp.db_course_project.application.dto.AuthControllerDto.LoginResponseDto;
 import net.sonerapp.db_course_project.application.exceptions.UserDeactivatedException;
-import net.sonerapp.db_course_project.application.service.AuthService;
+import net.sonerapp.db_course_project.application.service.JwtService;
 import net.sonerapp.db_course_project.core.service.UserService;
 import net.sonerapp.db_course_project.infrastructure.security.jwt.JwtUtils;
 
 @Service
-public class AuthServiceImpl implements AuthService {
+public class JwtServiceImpl implements JwtService {
 
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
 
-    public AuthServiceImpl(JwtUtils jwtUtils, AuthenticationManager authenticationManager,
+    public JwtServiceImpl(JwtUtils jwtUtils, AuthenticationManager authenticationManager,
             UserService userService) {
         this.jwtUtils = jwtUtils;
         this.authenticationManager = authenticationManager;

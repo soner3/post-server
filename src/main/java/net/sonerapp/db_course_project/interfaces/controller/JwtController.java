@@ -22,18 +22,18 @@ import net.sonerapp.db_course_project.application.dto.OkDto;
 import net.sonerapp.db_course_project.application.dto.AuthControllerDto.LoginRequestDto;
 import net.sonerapp.db_course_project.application.dto.AuthControllerDto.LoginResponseDto;
 import net.sonerapp.db_course_project.application.exceptions.UserDeactivatedException;
-import net.sonerapp.db_course_project.application.service.AuthService;
+import net.sonerapp.db_course_project.application.service.JwtService;
 import net.sonerapp.db_course_project.infrastructure.security.jwt.JwtUtils;
 
 @RestController
-@RequestMapping("/api/v1/auth/jwt")
-@Tag(name = "Auth")
-public class AuthController {
+@RequestMapping("/api/v1/jwt")
+@Tag(name = "JWT")
+public class JwtController {
 
-    private final AuthService authService;
+    private final JwtService jwtService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
+    public JwtController(JwtService jwtService) {
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/create")
@@ -43,7 +43,7 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Invalid Request Body", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
     })
     public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto loginData) {
-        return authService.processLogin(loginData.username(), loginData.password());
+        return jwtService.processLogin(loginData.username(), loginData.password());
     }
 
     @Operation(summary = "Reauthorize the user", description = "Uses the refresh token in the cookie to generate a new access token", responses = {
@@ -54,7 +54,7 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<OkDto> reAuthorize(
             @CookieValue(required = true, name = JwtUtils.REFRESH_COOKIE_KEY) String refreshToken) {
-        return authService.processReAuthorization(refreshToken);
+        return jwtService.processReAuthorization(refreshToken);
     }
 
     @ExceptionHandler

@@ -57,7 +57,7 @@ public class LikeController {
     }
 
     @Operation(summary = "Delete Like", description = "Deletes", responses = {
-            @ApiResponse(responseCode = "200", description = "Like Deleted", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LikeDto.class))),
+            @ApiResponse(responseCode = "200", description = "Like Deleted", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OkDto.class))),
             @ApiResponse(responseCode = "401", description = "Not Authenticated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid Request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
     }, security = @SecurityRequirement(name = "accessAuth"))
