@@ -5,13 +5,11 @@ import java.util.List;
 
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,7 +33,6 @@ import net.sonerapp.db_course_project.application.dto.PostController.PostComment
 import net.sonerapp.db_course_project.application.dto.PostController.PostDto;
 import net.sonerapp.db_course_project.application.dto.PostController.PostLikeDto;
 import net.sonerapp.db_course_project.application.dto.PostController.PostListItemDto;
-import net.sonerapp.db_course_project.core.exceptions.PostController.InvalidPostOwnerException;
 import net.sonerapp.db_course_project.core.model.Post;
 import net.sonerapp.db_course_project.core.service.PostService;
 import net.sonerapp.db_course_project.interfaces.exceptions.ConvertetToNullException;
@@ -116,14 +113,6 @@ public class PostController {
             @AuthenticationPrincipal UserDetails userDetails) {
         postService.deletePost(deletePostDto.postUuid(), userDetails);
         return ResponseEntity.ok(new OkDto("Post deleted successfully"));
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<ProblemDetail> invalidPostOwner(InvalidPostOwnerException e) {
-        var problem = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
-        problem.setTitle("Invalid Post Owner");
-        problem.setDetail(e.getMessage());
-        return ResponseEntity.of(problem).build();
     }
 
 }

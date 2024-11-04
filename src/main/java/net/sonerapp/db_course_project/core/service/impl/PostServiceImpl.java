@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import net.sonerapp.db_course_project.core.exceptions.EntityNotFoundException;
 import net.sonerapp.db_course_project.core.exceptions.IllegalUuidException;
+import net.sonerapp.db_course_project.core.exceptions.InvalidOwnerException;
 import net.sonerapp.db_course_project.core.exceptions.NoEntityDeletedException;
-import net.sonerapp.db_course_project.core.exceptions.PostController.InvalidPostOwnerException;
 import net.sonerapp.db_course_project.core.model.Post;
 import net.sonerapp.db_course_project.core.model.Profile;
 import net.sonerapp.db_course_project.core.model.User;
@@ -76,7 +76,7 @@ public class PostServiceImpl implements PostService {
                 throw new NoEntityDeletedException("No entity found to delete");
             }
         } else {
-            throw new InvalidPostOwnerException("The user is not owner of the post");
+            throw new InvalidOwnerException("The user is not owner of the post");
         }
 
     }

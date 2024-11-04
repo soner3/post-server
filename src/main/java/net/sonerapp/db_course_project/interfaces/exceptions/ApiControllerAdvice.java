@@ -21,6 +21,7 @@ import io.jsonwebtoken.security.SignatureException;
 import net.sonerapp.db_course_project.core.exceptions.DeleteEntityException;
 import net.sonerapp.db_course_project.core.exceptions.EntityNotFoundException;
 import net.sonerapp.db_course_project.core.exceptions.IllegalUuidException;
+import net.sonerapp.db_course_project.core.exceptions.InvalidOwnerException;
 import net.sonerapp.db_course_project.core.exceptions.NoEntityDeletedException;
 import net.sonerapp.db_course_project.core.exceptions.OutOfBoundsException;
 import net.sonerapp.db_course_project.infrastructure.exceptions.AccessDeniedException;
@@ -173,6 +174,14 @@ public class ApiControllerAdvice {
     public ResponseEntity<ProblemDetail> accessDenied(AccessDeniedException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         problem.setTitle("Access Denied");
+        problem.setDetail(e.getMessage());
+        return ResponseEntity.of(problem).build();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ProblemDetail> invalidOwner(InvalidOwnerException e) {
+        var problem = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        problem.setTitle("Invalid Owner");
         problem.setDetail(e.getMessage());
         return ResponseEntity.of(problem).build();
     }
