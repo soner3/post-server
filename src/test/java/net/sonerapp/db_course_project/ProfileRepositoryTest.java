@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 import jakarta.persistence.EntityManager;
 import net.sonerapp.db_course_project.core.model.Profile;
@@ -42,6 +43,13 @@ public class ProfileRepositoryTest {
     }
 
     @Test
+    @Sql("/sql/role.sql")
+    @Sql("/sql/user.sql")
+    @Sql("/sql/profile.sql")
+    @Sql("/sql/user_token.sql")
+    @Sql("/sql/post.sql")
+    @Sql("/sql/comment.sql")
+    @Sql("/sql/likes.sql")
     void database_has_tables() {
         List<Profile> profiles = em.createQuery("SELECT p FROM Profile p", Profile.class).getResultList();
         assertThat(profiles).isNotNull();
