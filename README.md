@@ -20,6 +20,11 @@ Zum starten der Anwendung können folgende Befehle ausgeführt werden:
 1. make run
 2. ./mvnw clean install spring-boot:run (Bei Windows: mvnw clean install spring-boot:run)
 
+## OpenAPI
+
+Die OpenAPI Dokumentation findet mman unter folgendem Link:
+http://localhost:8000/doc/swagger-ui/index.html
+
 ## WICHTIGE INFO
 
 Beim ersten starten der Anwendung werden 2 User und die Rolen in die Datenbank eingetragen.
