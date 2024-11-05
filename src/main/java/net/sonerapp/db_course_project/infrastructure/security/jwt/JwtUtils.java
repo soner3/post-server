@@ -1,6 +1,17 @@
 package net.sonerapp.db_course_project.infrastructure.security.jwt;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.Date;
 
 import org.slf4j.Logger;
@@ -38,8 +49,44 @@ public class JwtUtils {
     public static final String ACCESS_COOKIE_KEY = "accessToken";
     public static final String REFRESH_COOKIE_KEY = "refreshToken";
 
-    // Nur für entwicklungs zwecke
-    private final KeyPair keyPair = Jwts.SIG.RS512.keyPair().build();
+    private KeyPair keyPair;
+
+    public JwtUtils() {
+        try {
+            String privateKeyContent = new String(
+                    Files.readAllBytes(Paths.get("src/main/resources/keys/private_key.pem")))
+                    .replaceAll("-----BEGIN PRIVATE KEY-----", "")
+                    .replaceAll("-----END PRIVATE KEY-----", "")
+                    .replaceAll("\\s+", "");
+
+            String publicKeyContent = new String(
+                    Files.readAllBytes(Paths.get("src/main/resources/keys/public_key.pem")))
+                    .replaceAll("-----BEGIN PUBLIC KEY-----", "")
+                    .replaceAll("-----END PUBLIC KEY-----", "")
+                    .replaceAll("\\s+", "");
+
+            byte[] privateKeyDecoded = Base64.getDecoder().decode(privateKeyContent);
+            byte[] publicKeyDecoded = Base64.getDecoder().decode(publicKeyContent);
+
+            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyDecoded);
+            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyDecoded);
+
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+
+            PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
+            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+
+            this.keyPair = new KeyPair(publicKey, privateKey);
+
+        } catch (IOException e) {
+            log.error("Could not read private and public key: {}", e.getMessage());
+        } catch (NoSuchAlgorithmException e) {
+            log.error("No RSA algorithm exists: {}", e.getMessage());
+        } catch (InvalidKeySpecException e) {
+            log.error("Invalid Key: {}", e.getMessage());
+
+        }
+    }
 
     public String getJwtFromHeader(HttpServletRequest request) {
         String token = request.getHeader("Auhtorization");
