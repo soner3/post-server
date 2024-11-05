@@ -27,7 +27,7 @@ import net.sonerapp.db_course_project.core.model.Comment;
 import net.sonerapp.db_course_project.core.service.CommentService;
 
 @RestController
-@RequestMapping("/api/v1/comment")
+@RequestMapping("/api/v2/comment")
 @Tag(name = "Comment")
 public class CommentController {
 

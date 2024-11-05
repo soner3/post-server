@@ -142,7 +142,7 @@ public class ApiControllerAdvice {
     public ResponseEntity<ProblemDetail> invalidProperties(PropertyReferenceException e) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Invalid Propertys");
-        problem.setDetail("Invalid request properties has been sent ti this ressource");
+        problem.setDetail("Invalid request properties has been sent to this ressource");
         return ResponseEntity.of(problem).build();
     }
 
