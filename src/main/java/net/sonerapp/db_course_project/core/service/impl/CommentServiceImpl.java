@@ -1,7 +1,9 @@
 package net.sonerapp.db_course_project.core.service.impl;
 
 import java.util.UUID;
+import java.util.stream.Stream;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -85,6 +87,11 @@ public class CommentServiceImpl implements CommentService {
             throw new InvalidOwnerException("The Profile is not owner of this comment");
         }
 
+    }
+
+    @Override
+    public Stream<Comment> getAllComments(Pageable pageable) {
+        return commentRepository.findAll(pageable).stream();
     }
 
 }

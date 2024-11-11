@@ -3,6 +3,7 @@ package net.sonerapp.db_course_project.interfaces.controller;
 import java.util.stream.Stream;
 
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -64,8 +65,8 @@ public class ProfileController {
     @GetMapping
     @RoleValidator
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Stream<ProfileDto>> getAllProfiles() {
-        Stream<ProfileDto> profileStream = profileService.getAllProfiles()
+    public ResponseEntity<Stream<ProfileDto>> getAllProfiles(Pageable pageable) {
+        Stream<ProfileDto> profileStream = profileService.getAllProfiles(pageable)
                 .map(profile -> conversionService.convert(profile, ProfileDto.class));
         return ResponseEntity.ok(profileStream);
     }

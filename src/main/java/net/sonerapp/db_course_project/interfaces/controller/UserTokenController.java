@@ -36,7 +36,7 @@ public class UserTokenController {
 
     @Operation(summary = "All User Token", description = "Returns all User Token if the user has the admin role", responses = {
             @ApiResponse(responseCode = "200", description = "Request Successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserTokenDto[].class))),
-            @ApiResponse(responseCode = "401", description = "User not unauthorized", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class)))
+            @ApiResponse(responseCode = "401", description = "User not authorized", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class)))
     }, security = @SecurityRequirement(name = "accessAuth"))
     @GetMapping
     @RoleValidator

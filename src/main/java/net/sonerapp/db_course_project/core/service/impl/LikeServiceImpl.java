@@ -1,7 +1,9 @@
 package net.sonerapp.db_course_project.core.service.impl;
 
 import java.util.UUID;
+import java.util.stream.Stream;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -81,5 +83,10 @@ public class LikeServiceImpl implements LikeService {
             throw new NoEntityDeletedException("No like from the the profile to the given post was found to delete");
         }
 
+    }
+
+    @Override
+    public Stream<Likes> getAllLikes(Pageable pageable) {
+        return likeRepository.findAll(pageable).stream();
     }
 }

@@ -2,6 +2,7 @@ package net.sonerapp.db_course_project.core.service.impl;
 
 import java.util.stream.Stream;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -59,8 +60,8 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Stream<Profile> getAllProfiles() {
-        return profileRepository.findAll().stream();
+    public Stream<Profile> getAllProfiles(Pageable pageable) {
+        return profileRepository.findAll(pageable).stream();
     }
 
 }

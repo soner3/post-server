@@ -1,11 +1,15 @@
 package net.sonerapp.db_course_project.interfaces.controller;
 
+import java.util.stream.Stream;
+
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +27,7 @@ import net.sonerapp.db_course_project.application.dto.UnauthorizedDto;
 import net.sonerapp.db_course_project.application.dto.CommentControllerDto.CommentDto;
 import net.sonerapp.db_course_project.application.dto.CommentControllerDto.CreateCommentDto;
 import net.sonerapp.db_course_project.application.dto.CommentControllerDto.DeleteCommentDto;
+import net.sonerapp.db_course_project.application.dto.RoleController.RoleDto;
 import net.sonerapp.db_course_project.core.model.Comment;
 import net.sonerapp.db_course_project.core.service.CommentService;
 
@@ -65,6 +70,17 @@ public class CommentController {
             @AuthenticationPrincipal UserDetails userDetails) {
         commentService.deleteComment(deleteCommentDto.commentUuid(), userDetails);
         return ResponseEntity.ok(new OkDto("Successfully deleted"));
+    }
+
+    @Operation(summary = "All Comments", description = "Returns all existing comments", responses = {
+            @ApiResponse(responseCode = "200", description = "Request Successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RoleDto[].class))),
+            @ApiResponse(responseCode = "401", description = "User not authorized", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class)))
+    }, security = @SecurityRequirement(name = "accessAuth"))
+    @GetMapping
+    public ResponseEntity<Stream<CommentDto>> getAllComments(Pageable pageable) {
+        Stream<CommentDto> commentList = commentService.getAllComments(pageable)
+                .map(comment -> conversionService.convert(comment, CommentDto.class));
+        return ResponseEntity.ok(commentList);
     }
 
 }

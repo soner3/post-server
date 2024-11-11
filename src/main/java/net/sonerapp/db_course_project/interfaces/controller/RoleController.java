@@ -37,7 +37,7 @@ public class RoleController {
 
     @Operation(summary = "All Roles", description = "Returns all existing Roles", responses = {
             @ApiResponse(responseCode = "200", description = "Request Successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RoleDto[].class))),
-            @ApiResponse(responseCode = "401", description = "User not unauthorized", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class)))
+            @ApiResponse(responseCode = "401", description = "User not authorized", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class)))
     }, security = @SecurityRequirement(name = "accessAuth"))
     @GetMapping
     @RoleValidator

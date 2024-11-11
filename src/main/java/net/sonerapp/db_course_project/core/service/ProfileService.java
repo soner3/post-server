@@ -2,6 +2,7 @@ package net.sonerapp.db_course_project.core.service;
 
 import java.util.stream.Stream;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import net.sonerapp.db_course_project.application.dto.ProfileController.UpdateProfileDto;
@@ -12,6 +13,6 @@ public interface ProfileService {
 
     void deleteProfile(UserDetails userDetails);
 
-    Stream<Profile> getAllProfiles();
+    Stream<Profile> getAllProfiles(Pageable pageable);
 
 }

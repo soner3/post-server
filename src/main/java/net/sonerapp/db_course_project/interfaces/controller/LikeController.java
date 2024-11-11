@@ -1,6 +1,9 @@
 package net.sonerapp.db_course_project.interfaces.controller;
 
+import java.util.stream.Stream;
+
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +29,7 @@ import net.sonerapp.db_course_project.application.dto.UnauthorizedDto;
 import net.sonerapp.db_course_project.application.dto.LikeControllerDto.CreateLikeDto;
 import net.sonerapp.db_course_project.application.dto.LikeControllerDto.DeleteLikeDto;
 import net.sonerapp.db_course_project.application.dto.LikeControllerDto.LikeDto;
+import net.sonerapp.db_course_project.application.dto.RoleController.RoleDto;
 import net.sonerapp.db_course_project.core.exceptions.LikeController.IllegalLikeException;
 import net.sonerapp.db_course_project.core.model.Likes;
 import net.sonerapp.db_course_project.core.service.LikeService;
@@ -66,6 +71,17 @@ public class LikeController {
             @AuthenticationPrincipal UserDetails userDetails) {
         likeService.deleteLike(deleteLikeDto.postUuid(), userDetails);
         return ResponseEntity.ok(new OkDto("Like deleted successfully"));
+    }
+
+    @Operation(summary = "All Likes", description = "Returns all existing Likes", responses = {
+            @ApiResponse(responseCode = "200", description = "Request Successfull", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RoleDto[].class))),
+            @ApiResponse(responseCode = "401", description = "User not authorized", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UnauthorizedDto.class)))
+    }, security = @SecurityRequirement(name = "accessAuth"))
+    @GetMapping
+    public ResponseEntity<Stream<LikeDto>> getAllLikes(Pageable pageable) {
+        Stream<LikeDto> likeList = likeService.getAllLikes(pageable)
+                .map(like -> conversionService.convert(like, LikeDto.class));
+        return ResponseEntity.ok(likeList);
     }
 
     @ExceptionHandler
