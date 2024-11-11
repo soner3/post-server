@@ -58,7 +58,7 @@ public class RoleServiceImpl implements RoleService {
         }
 
         return roleRepository.findByUuid(newUuid)
-                .orElseThrow(() -> new EntityNotFoundException("No User Token found to delete"));
+                .orElseThrow(() -> new EntityNotFoundException("No User Token found with the given UUID"));
 
     }
 
