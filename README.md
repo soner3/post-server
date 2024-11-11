@@ -7,7 +7,7 @@
 2. Das JDK (Mindestens Version 17) muss installiert sein
    (JAVA_HOME und PATH müssen in den Systemumgebungsvariablen vorhanden sein)
 3. Folgende Ports dürfen NICHT besetzt sein
-   (Ports können in der jewiligen properties und compose datei gändert werden):
+   (Ports können in der jewiligen properties und compose Datei gändert werden):
    1. 8000 - Tomcat
    2. 3306 - MySQL
    3. 1025 - Mailpit Email-Server
@@ -17,8 +17,8 @@
 
 Zum starten der Anwendung können folgende Befehle ausgeführt werden:
 
-1. make run
-2. ./mvnw clean install spring-boot:run (Bei Windows: mvnw clean install spring-boot:run)
+1. `make run`
+2. `./mvnw clean install spring-boot:run` (Bei Windows: `mvnw clean install spring-boot:run`)
 
 ## OpenAPI
 

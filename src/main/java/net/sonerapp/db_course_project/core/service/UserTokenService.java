@@ -8,4 +8,9 @@ import net.sonerapp.db_course_project.core.model.UserToken;
 
 public interface UserTokenService {
     Stream<UserToken> getUserTokenPage(Pageable pageable);
+
+    void deleteToken(String token);
+
+    UserToken getToken(String token);
+
 }

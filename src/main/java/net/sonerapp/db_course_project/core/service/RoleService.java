@@ -10,4 +10,8 @@ public interface RoleService {
 
     Stream<Role> getRolePage(Pageable pageable);
 
+    void deleteRole(String uuid);
+
+    Role getRole(String uuid);
+
 }
