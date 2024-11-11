@@ -1,10 +1,15 @@
 package net.sonerapp.db_course_project.core.service.impl;
 
+import java.util.stream.Stream;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import net.sonerapp.db_course_project.application.dto.ProfileController.UpdateProfileDto;
+import net.sonerapp.db_course_project.core.exceptions.EntityNotFoundException;
+import net.sonerapp.db_course_project.core.exceptions.NoEntityDeletedException;
 import net.sonerapp.db_course_project.core.model.Profile;
 import net.sonerapp.db_course_project.core.model.User;
 import net.sonerapp.db_course_project.core.repository.ProfileRepository;
@@ -35,6 +40,27 @@ public class ProfileServiceImpl implements ProfileService {
         profile.setZipCode(updateProfileDto.zipCode());
 
         return profileRepository.save(profile);
+    }
+
+    @Override
+    @Transactional
+    public void deleteProfile(UserDetails userDetails) {
+        User user = userService.getUser(userDetails.getUsername());
+        Profile profile = profileRepository.findByUser(user)
+                .orElseThrow(() -> new EntityNotFoundException("No profile found for the user"));
+
+        int deletedEntityCount = profileRepository.deleteByUuid(profile.getUuid());
+
+        if (deletedEntityCount > 0) {
+            return;
+        } else {
+            throw new NoEntityDeletedException("No entity found to delete");
+        }
+    }
+
+    @Override
+    public Stream<Profile> getAllProfiles() {
+        return profileRepository.findAll().stream();
     }
 
 }
